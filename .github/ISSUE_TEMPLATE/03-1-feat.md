@@ -2,7 +2,7 @@
 name: 기능 추가
 about: Feature Issue
 title: '[feat] '
-labels: ["feat"]
+labels: ["Task", "feat"]
 assignees: ''
 
 ---

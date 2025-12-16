@@ -2,7 +2,7 @@
 name: 리팩토링
 about: Refactor Issue
 title: '[refactor] '
-labels: ["refactor"]
+labels: ["Task", "refactor"]
 assignees: ''
 
 ---
