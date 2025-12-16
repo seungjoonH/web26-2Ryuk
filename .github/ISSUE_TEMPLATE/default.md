@@ -2,7 +2,7 @@
 name: 기타 이슈
 about: Other Issue
 title: '[] '
-labels: []
+labels: ["Task"]
 assignees: ''
 
 ---

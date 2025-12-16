@@ -2,7 +2,7 @@
 name: 버그 수정
 about: Refactor Issue
 title: '[fix] '
-labels: ["fix"]
+labels: ["Task", "fix"]
 assignees: ''
 
 ---
