@@ -1,0 +1,59 @@
+# Frontend Production Dockerfile (Multi-stage build)
+FROM node:22-alpine AS base
+
+# Install pnpm
+RUN npm install -g pnpm@9.12.0
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+COPY fe/package.json ./fe/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --prod=false
+
+# Copy source code
+COPY fe ./fe
+
+# Build application
+WORKDIR /app/fe
+RUN pnpm build
+
+# Production stage with Nginx
+FROM nginx:alpine AS production
+
+# Install wget for healthcheck
+RUN apk add --no-cache wget
+
+# Set environment variables
+ARG NODE_ENV=production
+ARG VERSION=latest
+ENV NODE_ENV=${NODE_ENV}
+ENV VERSION=${VERSION}
+
+# Copy built files from builder
+# Next.js output structure: .next/static and public
+# Note: This assumes Next.js is configured for static export or standalone mode
+# For standard Next.js, you may need to adjust based on your build output
+COPY --from=base /app/fe/.next/static ./usr/share/nginx/html/_next/static
+COPY --from=base /app/fe/public ./usr/share/nginx/html/public
+
+# Copy HTML files if they exist (for static export)
+COPY --from=base /app/fe/out ./usr/share/nginx/html 2>/dev/null || true
+
+# Copy nginx configuration
+COPY infra/nginx/nginx.conf /etc/nginx/nginx.conf.template
+COPY infra/nginx/entrypoint.sh /entrypoint.sh
+
+# Make entrypoint executable
+RUN chmod +x /entrypoint.sh
+
+# Expose port (will be set by environment variable)
+EXPOSE 80
+
+# Use entrypoint to substitute environment variables
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
+

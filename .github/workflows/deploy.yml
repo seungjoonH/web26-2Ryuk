@@ -1,0 +1,78 @@
+name: CD - Deploy to NCP
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker image tag to deploy (default: latest)'
+        required: false
+        default: 'latest'
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+  DOCKER_IMAGE_BACKEND: ${{ secrets.DOCKER_IMAGE_NAME }}-backend
+  DOCKER_IMAGE_FRONTEND: ${{ secrets.DOCKER_IMAGE_NAME }}-frontend
+  DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || '~/project' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout Repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Determine Image Tag (입력값 or 기본 latest)
+      - name: Set image tag
+        id: tag
+        run: |
+          if [ -z "${{ inputs.image_tag }}" ]; then
+            echo "IMAGE_TAG=latest" >> $GITHUB_OUTPUT
+          else
+            echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          fi
+          echo "Selected image tag: ${{ inputs.image_tag }}"
+
+      # 3️⃣ SSH 배포
+      - name: SSH into NCP and deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.NCP_HOST }}
+          username: ${{ secrets.NCP_USERNAME }}
+          key: ${{ secrets.NCP_SSH_PRIVATE_KEY }}
+          envs: DOCKER_USERNAME,DOCKER_PASSWORD,DOCKER_IMAGE_BACKEND,DOCKER_IMAGE_FRONTEND,DOCKER_IMAGE_TAG,DEPLOY_PATH
+          script_stop: true
+          timeout: 300s
+          script: |
+            set -e
+            echo "[INFO] Connecting to server..."
+            cd ${DEPLOY_PATH:-~/project} || exit 1
+            export DOCKER_IMAGE_TAG=${{ steps.tag.outputs.IMAGE_TAG }}
+            chmod +x ./infra/deploy.sh
+            echo "[INFO] Running deploy.sh..."
+            ./infra/deploy.sh
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_IMAGE_BACKEND: ${{ secrets.DOCKER_IMAGE_NAME }}-backend
+          DOCKER_IMAGE_FRONTEND: ${{ secrets.DOCKER_IMAGE_NAME }}-frontend
+
+      # 4️⃣ 성공 로그
+      - name: Notify Success
+        if: success()
+        run: |
+          echo "✅ 배포 성공"
+          echo "Tag: ${{ steps.tag.outputs.IMAGE_TAG }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Commit: ${{ github.sha }}"
+
+      # 5️⃣ 실패 로그
+      - name: Notify Failure
+        if: failure()
+        run: |
+          echo "❌ 배포 실패"
+          echo "Tag: ${{ steps.tag.outputs.IMAGE_TAG }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Commit: ${{ github.sha }}"
