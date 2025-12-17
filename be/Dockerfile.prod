@@ -37,8 +37,9 @@ COPY be/package.json ./be/
 RUN pnpm install --frozen-lockfile --prod
 
 # Copy built application from builder
-COPY --from=base /app/be/dist ./be/dist
-COPY --from=base /app/be/node_modules/.prisma ./be/node_modules/.prisma 2>/dev/null || true
+COPY --from=base /app/be/dist/ ./be/dist/
+# Prisma client artifacts (directory may be absent if not generated)
+COPY --from=base /app/be/node_modules/.prisma/ ./be/node_modules/.prisma/
 
 # Set environment variables
 ARG NODE_ENV=production

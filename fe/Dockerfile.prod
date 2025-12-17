@@ -40,8 +40,8 @@ ENV VERSION=${VERSION}
 COPY --from=base /app/fe/.next/static ./usr/share/nginx/html/_next/static
 COPY --from=base /app/fe/public ./usr/share/nginx/html/public
 
-# Copy HTML files if they exist (for static export)
-COPY --from=base /app/fe/out ./usr/share/nginx/html 2>/dev/null || true
+# Copy built static export (if exists)
+COPY --from=base /app/fe/out/ /usr/share/nginx/html/
 
 # Copy nginx configuration
 COPY infra/nginx/nginx.conf /etc/nginx/nginx.conf.template
