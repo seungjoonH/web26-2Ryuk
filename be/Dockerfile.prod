@@ -1,0 +1,56 @@
+# Backend Production Dockerfile
+FROM node:22-alpine AS base
+
+# Install pnpm
+RUN npm install -g pnpm@9.12.0
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+COPY be/package.json ./be/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --prod=false
+
+# Copy source code
+COPY be ./be
+
+# Build application
+WORKDIR /app/be
+RUN pnpm build
+
+# Production stage
+FROM node:22-alpine AS production
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm@9.12.0
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+COPY be/package.json ./be/
+
+# Install production dependencies only
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy built application from builder
+COPY --from=base /app/be/dist/ ./be/dist/
+# Prisma client artifacts (directory may be absent if not generated)
+COPY --from=base /app/be/node_modules/.prisma/ ./be/node_modules/.prisma/
+
+# Set environment variables
+ARG NODE_ENV=production
+ARG VERSION=latest
+ENV NODE_ENV=${NODE_ENV}
+ENV VERSION=${VERSION}
+
+# Expose port
+EXPOSE 3000
+
+# Start application
+WORKDIR /app/be
+CMD ["node", "dist/main.js"]
+
