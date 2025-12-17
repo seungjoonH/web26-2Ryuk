@@ -7,8 +7,7 @@ const nextConfig: NextConfig = {
   ...(process.env.NODE_ENV === 'development' && {
     // 개발 서버 설정
     devIndicators: {
-      buildActivity: true,
-      buildActivityPosition: 'bottom-right',
+      position: 'bottom-right',
     },
   }),
 
