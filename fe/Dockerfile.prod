@@ -17,9 +17,9 @@ RUN pnpm install --frozen-lockfile --prod=false --filter fe...
 # Copy source code
 COPY fe ./fe
 
-# Build application (static export)
+# Build application (static export, default out/ directory)
 WORKDIR /app/fe
-RUN pnpm build && pnpm next export -o out
+RUN pnpm build && pnpm next export
 
 # Production stage with Nginx
 FROM nginx:alpine AS production
