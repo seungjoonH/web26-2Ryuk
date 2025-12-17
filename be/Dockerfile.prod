@@ -11,8 +11,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY be/package.json ./be/
 
-# Install dependencies for backend workspace (lockfile may be root-only)
-RUN pnpm install --no-frozen-lockfile --prod=false --filter be...
+# Install dependencies for backend workspace
+RUN pnpm install --frozen-lockfile --prod=false --filter be...
 
 # Copy source code
 COPY be ./be
@@ -34,12 +34,10 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY be/package.json ./be/
 
 # Install production dependencies only for backend workspace
-RUN pnpm install --no-frozen-lockfile --prod --filter be...
+RUN pnpm install --frozen-lockfile --prod --filter be...
 
 # Copy built application from builder
 COPY --from=base /app/be/dist/ ./be/dist/
-# Prisma client artifacts (directory may be absent if not generated)
-COPY --from=base /app/be/node_modules/.prisma/ ./be/node_modules/.prisma/
 
 # Set environment variables
 ARG NODE_ENV=production

@@ -7,12 +7,12 @@ RUN npm install -g pnpm@9.12.0
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
+# Copy workspace manifests
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY fe/package.json ./fe/
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies for frontend workspace
+RUN pnpm install --frozen-lockfile --filter fe...
 
 # Copy source code (will be overridden by volume mount in docker-compose)
 COPY fe ./fe
