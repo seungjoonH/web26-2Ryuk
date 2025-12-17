@@ -19,7 +19,7 @@ COPY fe ./fe
 
 # Build application (static export)
 WORKDIR /app/fe
-RUN pnpm build && pnpm export -o out
+RUN pnpm build && pnpm next export -o out
 
 # Production stage with Nginx
 FROM nginx:alpine AS production
