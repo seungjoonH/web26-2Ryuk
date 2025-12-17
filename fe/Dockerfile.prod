@@ -17,9 +17,9 @@ RUN pnpm install --frozen-lockfile --prod=false --filter fe...
 # Copy source code
 COPY fe ./fe
 
-# Build application
+# Build application (static export)
 WORKDIR /app/fe
-RUN pnpm build
+RUN pnpm build && pnpm export -o out
 
 # Production stage with Nginx
 FROM nginx:alpine AS production
@@ -33,14 +33,7 @@ ARG VERSION=latest
 ENV NODE_ENV=${NODE_ENV}
 ENV VERSION=${VERSION}
 
-# Copy built files from builder
-# Next.js output structure: .next/static and public
-# Note: This assumes Next.js is configured for static export or standalone mode
-# For standard Next.js, you may need to adjust based on your build output
-COPY --from=base /app/fe/.next/static ./usr/share/nginx/html/_next/static
-COPY --from=base /app/fe/public ./usr/share/nginx/html/public
-
-# Copy built static export (if exists)
+# Copy exported static site
 COPY --from=base /app/fe/out/ /usr/share/nginx/html/
 
 # Copy nginx configuration
