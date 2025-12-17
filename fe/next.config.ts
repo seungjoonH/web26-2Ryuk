@@ -2,6 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  output: 'export',
   
   // 개발 환경 설정
   ...(process.env.NODE_ENV === 'development' && {
