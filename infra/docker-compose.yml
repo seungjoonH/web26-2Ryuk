@@ -46,12 +46,24 @@ services:
       NGINX_HTTPS_PORT: ${NGINX_HTTPS_PORT}
     command: >
       sh -c "
+        set -e &&
+        echo 'gettext 설치 확인 중...' &&
+        if ! command -v envsubst > /dev/null 2>&1; then
+          echo 'envsubst 없음, gettext 설치 중...' &&
+          apk add --no-cache gettext > /dev/null 2>&1
+        fi &&
         echo '기본 nginx.conf 삭제 및 새 설정 생성 중...' &&
         rm -f /etc/nginx/nginx.conf &&
         rm -rf /etc/nginx/conf.d/* &&
-        envsubst '$${API_HOST} $${API_PORT} $${NGINX_HTTP_PORT} $${NGINX_HTTPS_PORT}' 
+        echo 'envsubst 실행 중...' &&
+        if ! envsubst '$${API_HOST} $${API_PORT} $${NGINX_HTTP_PORT} $${NGINX_HTTPS_PORT}' 
         < /etc/nginx/nginx.conf.template 
-        > /etc/nginx/nginx.conf &&
+        > /etc/nginx/nginx.conf; then
+          echo 'ERROR: envsubst 실패! 템플릿 파일을 직접 복사합니다.' &&
+          cp /etc/nginx/nginx.conf.template /etc/nginx/nginx.conf
+        fi &&
+        echo '생성된 파일 확인 (첫 10줄):' &&
+        head -10 /etc/nginx/nginx.conf &&
         echo '설정 파일 검증 중...' &&
         nginx -t &&
         echo 'Nginx 시작...' &&
