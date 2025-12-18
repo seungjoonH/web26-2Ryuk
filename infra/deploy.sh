@@ -138,13 +138,15 @@ health_check() {
 
 # 8️⃣ 서비스 재시작
 log "서비스 재시작 중..."
-if ! docker compose -f "$SCRIPT_DIR/docker-compose.yml" down; then
-  log_error "기존 서비스 종료 실패"
-  exit 1
-fi
+log "기존 서비스 종료 중..."
+docker compose -f "$SCRIPT_DIR/docker-compose.yml" down 2>&1 || log_warn "기존 서비스가 없거나 종료 중 오류 발생 (무시하고 계속 진행)"
 
+log "서비스 시작 중..."
 if ! docker compose -f "$SCRIPT_DIR/docker-compose.yml" up -d; then
   log_error "서비스 시작 실패"
+  log "상세 오류 확인 중..."
+  docker compose -f "$SCRIPT_DIR/docker-compose.yml" config
+  docker compose -f "$SCRIPT_DIR/docker-compose.yml" ps -a
   # 롤백 시도
   if [ "$PREVIOUS_TAG" != "latest" ] && [ "$PREVIOUS_TAG" != "$DOCKER_IMAGE_TAG" ]; then
     log_warn "이전 버전으로 롤백 시도..."
