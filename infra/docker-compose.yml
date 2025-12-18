@@ -38,47 +38,20 @@ services:
       - ./nginx/certs/fullchain.crt:/etc/nginx/ssl/fullchain.crt:ro
       - ./nginx/certs/private.key:/etc/nginx/ssl/private.key:ro
       - ./nginx/certs/dhparam.pem:/etc/nginx/ssl/dhparam.pem:ro
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf.template:ro
+      # [수정] 템플릿 파일 위치를 /etc/nginx/templates로 변경합니다.
+      - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
+      
     environment:
       API_HOST: ${API_HOST}
       API_PORT: ${API_PORT}
       NGINX_HTTP_PORT: ${NGINX_HTTP_PORT}
       NGINX_HTTPS_PORT: ${NGINX_HTTPS_PORT}
-    command: >
-      sh -c "
-        echo '=== 시작 ===' &&
-        echo 'gettext 설치 확인 중...' &&
-        if ! command -v envsubst > /dev/null 2>&1; then
-          echo 'envsubst 없음, gettext 설치 중...' &&
-          apk add --no-cache gettext || exit 1
-        fi &&
-        echo 'envsubst 버전:' &&
-        envsubst --version &&
-        echo '기본 nginx.conf 삭제 중...' &&
-        rm -f /etc/nginx/nginx.conf &&
-        rm -rf /etc/nginx/conf.d/* &&
-        echo '템플릿 파일 확인 (첫 5줄):' &&
-        head -5 /etc/nginx/nginx.conf.template &&
-        echo '환경변수 확인:' &&
-        echo '  API_HOST='$$API_HOST &&
-        echo '  API_PORT='$$API_PORT &&
-        echo '  NGINX_HTTP_PORT='$$NGINX_HTTP_PORT &&
-        echo '  NGINX_HTTPS_PORT='$$NGINX_HTTPS_PORT &&
-        echo 'envsubst 실행 중...' &&
-        envsubst '$${API_HOST} $${API_PORT} $${NGINX_HTTP_PORT} $${NGINX_HTTPS_PORT}' 
-        < /etc/nginx/nginx.conf.template 
-        > /etc/nginx/nginx.conf &&
-        echo '생성된 파일 확인 (첫 15줄):' &&
-        head -15 /etc/nginx/nginx.conf &&
-        echo '파일 크기:' &&
-        wc -l /etc/nginx/nginx.conf &&
-        echo 'events 섹션 확인:' &&
-        grep -c '^events' /etc/nginx/nginx.conf || echo 'WARNING: events 섹션 없음!' &&
-        echo '설정 파일 검증 중...' &&
-        nginx -t &&
-        echo 'Nginx 시작...' &&
-        nginx -g 'daemon off;'
-      "
+      # [추가] 치환할 환경변수만 명시하여 Nginx 고유 변수($host 등)를 보호합니다.
+      NGINX_ENVSUBST_VAR_LIST: '$API_HOST $API_PORT $NGINX_HTTP_PORT $NGINX_HTTPS_PORT'
+    # [수정] 수동 command 섹션을 삭제하여 Nginx 기본 entrypoint가 작동하게 합니다.
+      # [★ 추가 핵심 설정] 
+      # 결과물을 /etc/nginx/conf.d/ 가 아닌 /etc/nginx/nginx.conf 로 생성하게 합니다.
+      NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:${NGINX_HTTP_PORT}/health || wget --quiet --tries=1 --spider http://localhost:${NGINX_HTTP_PORT}/ || exit 0"]
       interval: 10s
