@@ -30,9 +30,7 @@ services:
   nginx:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGE_FRONTEND}:${DOCKER_IMAGE_TAG:-latest}
     container_name: nginx
-    # [핵심 수정] 환경변수 치환 후 로그를 출력하고 Nginx를 실행합니다.
-    entrypoint: ["/docker-entrypoint.sh"]
-    command: ["sh", "-c", "cat /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+    # [수정] entrypoint와 command를 삭제해야 자동 치환 스크립트가 돌아갑니다.
     depends_on:
       api:
         condition: service_healthy
@@ -43,31 +41,23 @@ services:
       - ./nginx/certs/fullchain.crt:/etc/nginx/ssl/fullchain.crt:ro
       - ./nginx/certs/private.key:/etc/nginx/ssl/private.key:ro
       - ./nginx/certs/dhparam.pem:/etc/nginx/ssl/dhparam.pem:ro
-      # 템플릿 파일 위치를 /etc/nginx/templates로 설정
+      # 템플릿 파일 위치
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
     environment:
       API_HOST: ${API_HOST}
       API_PORT: ${API_PORT}
       NGINX_HTTP_PORT: ${NGINX_HTTP_PORT}
       NGINX_HTTPS_PORT: ${NGINX_HTTPS_PORT}
-      # Nginx 고유 변수($host 등)가 깨지지 않도록 치환할 변수만 명시
-      NGINX_ENVSUBST_VAR_LIST: '$API_HOST $API_PORT $NGINX_HTTP_PORT $NGINX_HTTPS_PORT'
-      # 결과물을 /etc/nginx/nginx.conf 위치에 생성
+      # [핵심] 치환된 결과물이 메인 설정파일을 덮어쓰도록 파일명을 지정합니다.
+      NGINX_ENVSUBST_FILENAME: nginx.conf
       NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx
+      NGINX_ENVSUBST_VAR_LIST: '$API_HOST $API_PORT $NGINX_HTTP_PORT $NGINX_HTTPS_PORT'
     healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:${NGINX_HTTP_PORT}/health || wget --quiet --tries=1 --spider http://localhost:${NGINX_HTTP_PORT}/ || exit 0"]
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:${NGINX_HTTP_PORT}/health || exit 0"]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
     networks:
       - eryuk_net
     restart: unless-stopped
