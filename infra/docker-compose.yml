@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   api:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGE_BACKEND}:${DOCKER_IMAGE_TAG:-latest}
@@ -28,6 +30,9 @@ services:
   nginx:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGE_FRONTEND}:${DOCKER_IMAGE_TAG:-latest}
     container_name: nginx
+    # [핵심 수정] 환경변수 치환 후 로그를 출력하고 Nginx를 실행합니다.
+    entrypoint: ["/docker-entrypoint.sh"]
+    command: ["sh", "-c", "cat /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
     depends_on:
       api:
         condition: service_healthy
@@ -38,19 +43,16 @@ services:
       - ./nginx/certs/fullchain.crt:/etc/nginx/ssl/fullchain.crt:ro
       - ./nginx/certs/private.key:/etc/nginx/ssl/private.key:ro
       - ./nginx/certs/dhparam.pem:/etc/nginx/ssl/dhparam.pem:ro
-      # [수정] 템플릿 파일 위치를 /etc/nginx/templates로 변경합니다.
+      # 템플릿 파일 위치를 /etc/nginx/templates로 설정
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
-      
     environment:
       API_HOST: ${API_HOST}
       API_PORT: ${API_PORT}
       NGINX_HTTP_PORT: ${NGINX_HTTP_PORT}
       NGINX_HTTPS_PORT: ${NGINX_HTTPS_PORT}
-      # [추가] 치환할 환경변수만 명시하여 Nginx 고유 변수($host 등)를 보호합니다.
+      # Nginx 고유 변수($host 등)가 깨지지 않도록 치환할 변수만 명시
       NGINX_ENVSUBST_VAR_LIST: '$API_HOST $API_PORT $NGINX_HTTP_PORT $NGINX_HTTPS_PORT'
-    # [수정] 수동 command 섹션을 삭제하여 Nginx 기본 entrypoint가 작동하게 합니다.
-      # [★ 추가 핵심 설정] 
-      # 결과물을 /etc/nginx/conf.d/ 가 아닌 /etc/nginx/nginx.conf 로 생성하게 합니다.
+      # 결과물을 /etc/nginx/nginx.conf 위치에 생성
       NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:${NGINX_HTTP_PORT}/health || wget --quiet --tries=1 --spider http://localhost:${NGINX_HTTP_PORT}/ || exit 0"]
