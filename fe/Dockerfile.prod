@@ -1,0 +1,52 @@
+# Frontend Production Dockerfile (Multi-stage build)
+FROM node:22-alpine AS base
+
+# Install pnpm
+RUN npm install -g pnpm@9.12.0
+
+# Set working directory
+WORKDIR /app
+
+# Copy workspace manifests
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY fe/package.json ./fe/
+
+# Install dependencies for frontend workspace
+RUN pnpm install --frozen-lockfile --prod=false --filter fe...
+
+# Copy source code
+COPY fe ./fe
+
+# Build application (static export via output: 'export')
+WORKDIR /app/fe
+RUN pnpm build
+
+# Production stage with Nginx
+FROM nginx:alpine AS production
+
+# Install wget for healthcheck
+RUN apk add --no-cache wget
+
+# Set environment variables
+ARG NODE_ENV=production
+ARG VERSION=latest
+ENV NODE_ENV=${NODE_ENV}
+ENV VERSION=${VERSION}
+
+# Copy exported static site
+COPY --from=base /app/fe/out/ /usr/share/nginx/html/
+
+# Copy nginx configuration
+COPY infra/nginx/nginx.conf /etc/nginx/nginx.conf.template
+COPY infra/nginx/entrypoint.sh /entrypoint.sh
+
+# Make entrypoint executable
+RUN chmod +x /entrypoint.sh
+
+# Expose port (will be set by environment variable)
+EXPOSE 80
+
+# Use entrypoint to substitute environment variables
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
+

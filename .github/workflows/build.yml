@@ -1,0 +1,108 @@
+name: CI - Build & Push Docker Images
+
+on:
+  push:
+    branches:
+      - release
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+  IMAGE_NAME_BACKEND: ${{ secrets.DOCKER_IMAGE_NAME }}-backend
+  IMAGE_NAME_FRONTEND: ${{ secrets.DOCKER_IMAGE_NAME }}-frontend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2) Git config
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@github.com"
+
+      # 3) Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 4) Login Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      # 5) Version bump (external script)
+      - name: Run version bump scripts
+        id: bump
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          chmod +x .github/script/fetch-tag.sh
+          ./.github/script/fetch-tag.sh
+
+      - name: Version bump result
+        run: |
+          echo "New Tag: ${{ steps.bump.outputs.tag }}"
+          echo "Description: ${{ steps.bump.outputs.description }}"
+
+      # 6) Build & Push Backend Image
+      - name: Build & Push Backend Image
+        if: steps.bump.outputs.tag != ''      # ← merge commit일 때만 실행
+        run: |
+          VERSION=${{ steps.bump.outputs.tag }}
+          echo "🚀 Building Backend Image: $VERSION"
+
+          docker build \
+            --build-arg NODE_ENV=production \
+            --build-arg VERSION=$VERSION \
+            --cache-from=type=registry,ref=$DOCKER_USERNAME/$IMAGE_NAME_BACKEND:latest \
+            --cache-to=type=inline \
+            -t $DOCKER_USERNAME/$IMAGE_NAME_BACKEND:$VERSION \
+            -t $DOCKER_USERNAME/$IMAGE_NAME_BACKEND:latest \
+            -f be/Dockerfile.prod \
+            .
+
+          docker push $DOCKER_USERNAME/$IMAGE_NAME_BACKEND:$VERSION
+          docker push $DOCKER_USERNAME/$IMAGE_NAME_BACKEND:latest
+
+      # 7) Build & Push Frontend Image
+      - name: Build & Push Frontend Image
+        if: steps.bump.outputs.tag != ''      # ← merge commit일 때만 실행
+        run: |
+          VERSION=${{ steps.bump.outputs.tag }}
+          echo "🌐 Building Frontend Image: $VERSION"
+
+          docker build \
+            --build-arg NODE_ENV=production \
+            --build-arg VERSION=$VERSION \
+            --cache-from=type=registry,ref=$DOCKER_USERNAME/$IMAGE_NAME_FRONTEND:latest \
+            --cache-to=type=inline \
+            -t $DOCKER_USERNAME/$IMAGE_NAME_FRONTEND:$VERSION \
+            -t $DOCKER_USERNAME/$IMAGE_NAME_FRONTEND:latest \
+            -f fe/Dockerfile.prod \
+            .
+
+          docker push $DOCKER_USERNAME/$IMAGE_NAME_FRONTEND:$VERSION
+          docker push $DOCKER_USERNAME/$IMAGE_NAME_FRONTEND:latest
+
+      # 8) Build Result
+      - name: Notify build success
+        if: steps.bump.outputs.tag != '' && success()
+        run: |
+          echo "✅ Build & Push Success"
+          echo "Tag created: ${{ steps.bump.outputs.tag }}"
+          echo "Backend: $DOCKER_USERNAME/$IMAGE_NAME_BACKEND"
+          echo "Frontend: $DOCKER_USERNAME/$IMAGE_NAME_FRONTEND"
