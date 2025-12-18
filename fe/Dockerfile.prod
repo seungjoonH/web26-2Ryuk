@@ -36,17 +36,11 @@ ENV VERSION=${VERSION}
 # Copy exported static site
 COPY --from=base /app/fe/out/ /usr/share/nginx/html/
 
-# Copy nginx configuration
+# Copy nginx configuration (will be overridden by volume mount in docker-compose.yml)
 COPY infra/nginx/nginx.conf /etc/nginx/nginx.conf.template
-COPY infra/nginx/entrypoint.sh /entrypoint.sh
-
-# Make entrypoint executable
-RUN chmod +x /entrypoint.sh
 
 # Expose port (will be set by environment variable)
 EXPOSE 80
 
-# Use entrypoint to substitute environment variables
-ENTRYPOINT ["/entrypoint.sh"]
+# Default command (will be overridden by docker-compose.yml)
 CMD ["nginx", "-g", "daemon off;"]
-

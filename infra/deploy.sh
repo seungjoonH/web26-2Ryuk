@@ -120,16 +120,10 @@ health_check() {
     local nginx_status=$(docker compose -f "$SCRIPT_DIR/docker-compose.yml" ps nginx 2>/dev/null | grep -q "Up" && echo "up" || echo "down")
     
     if [ "$api_status" = "up" ] && [ "$nginx_status" = "up" ]; then
-      # 헬스체크 엔드포인트 확인 (있는 경우)
-      if command -v curl >/dev/null 2>&1; then
-        local api_health=$(curl -f -s "http://localhost:${API_PORT:-3000}/health" >/dev/null 2>&1 && echo "ok" || echo "fail")
-        if [ "$api_health" = "ok" ]; then
-          log "✓ 헬스체크 통과"
-          return 0
-        fi
-      else
-        # curl이 없으면 컨테이너가 실행 중이면 성공으로 간주
-        log "✓ 컨테이너 실행 확인 완료"
+      # 컨테이너 내부에서 헬스체크 (호스트 포트 개방 없이 확인)
+      if docker compose -f "$SCRIPT_DIR/docker-compose.yml" exec -T api \
+        wget --quiet --tries=1 --spider "http://localhost:${API_PORT:-3000}/health" >/dev/null 2>&1; then
+        log "✓ 헬스체크 통과"
         return 0
       fi
     fi
