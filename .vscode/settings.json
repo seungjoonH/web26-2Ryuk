@@ -1,0 +1,9 @@
+{
+  // 모든 파일에 대해 Prettier를 기본 포맷터로 사용
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // 저장할 때마다 자동으로 포맷팅 (권장)
+  "editor.formatOnSave": true,
+  
+  // 프로젝트에 설정 파일(.prettierrc 등)이 있을 때만 Prettier 적용
+  "prettier.requireConfig": true,
+}
