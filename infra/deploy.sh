@@ -90,6 +90,7 @@ if ! docker pull "$DOCKER_USERNAME/$DOCKER_IMAGE_BACKEND:$DOCKER_IMAGE_TAG"; the
   if [ "$PREVIOUS_TAG" != "latest" ] && [ "$PREVIOUS_TAG" != "$DOCKER_IMAGE_TAG" ]; then
     log_warn "이전 태그로 롤백 시도: $PREVIOUS_TAG"
     DOCKER_IMAGE_TAG=$PREVIOUS_TAG
+    export DOCKER_IMAGE_TAG # 환경변수 갱신 확정
   else
     exit 1
   fi

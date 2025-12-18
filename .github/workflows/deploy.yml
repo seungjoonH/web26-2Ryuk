@@ -14,17 +14,18 @@ env:
   DOCKER_IMAGE_BACKEND: ${{ secrets.DOCKER_IMAGE_NAME }}-backend
   DOCKER_IMAGE_FRONTEND: ${{ secrets.DOCKER_IMAGE_NAME }}-frontend
   DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || '~/project' }}
+  API_PORT: ${{ secrets.API_PORT || 3000 }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout Repository
+      # 1️⃣ 레포지토리 코드 체크아웃
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Determine Image Tag (입력값 or 기본 latest)
+      # 2️⃣ 이미지 태그 결정 (입력값 or 기본 latest)
       - name: Set image tag
         id: tag
         run: |
@@ -35,14 +36,29 @@ jobs:
           fi
           echo "Selected image tag: ${{ inputs.image_tag }}"
 
-      # 3️⃣ SSH 배포
+      # 3️⃣ 서버로 최신 설정 파일 전송 (SCP)
+      # docker-compose.yml과 nginx/ 설정을 서버의 최신 상태로 유지
+      - name: Copy infra files to NCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.NCP_HOST }}
+          username: ${{ secrets.NCP_USERNAME }}
+          key: ${{ secrets.NCP_SSH_PRIVATE_KEY }}
+          # 전송할 파일/폴더 지정 (프로젝트 구조에 맞게 수정)
+          source: 'docker-compose.yml,infra/,nginx/'
+          target: ${{ env.DEPLOY_PATH }}
+          # 기존 파일을 덮어쓰도록 설정
+          overwrite: true
+
+      # 4️⃣ SSH 접속 및 배포 스크립트 실행
       - name: SSH into NCP and deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.NCP_HOST }}
           username: ${{ secrets.NCP_USERNAME }}
           key: ${{ secrets.NCP_SSH_PRIVATE_KEY }}
-          envs: DOCKER_USERNAME,DOCKER_PASSWORD,DOCKER_IMAGE_BACKEND,DOCKER_IMAGE_FRONTEND,DOCKER_IMAGE_TAG,DEPLOY_PATH
+          # 셸 환경변수로 필요한 데이터 전달
+          envs: DOCKER_USERNAME,DOCKER_PASSWORD,DOCKER_IMAGE_BACKEND,DOCKER_IMAGE_FRONTEND,DOCKER_IMAGE_TAG,DEPLOY_PATH,API_PORT
           script_stop: true
           timeout: 300s
           script: |
@@ -54,12 +70,15 @@ jobs:
             echo "[INFO] Running deploy.sh..."
             ./infra/deploy.sh
         env:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-          DOCKER_IMAGE_BACKEND: ${{ secrets.DOCKER_IMAGE_NAME }}-backend
-          DOCKER_IMAGE_FRONTEND: ${{ secrets.DOCKER_IMAGE_NAME }}-frontend
+          DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ env.DOCKER_PASSWORD }}
+          DOCKER_IMAGE_BACKEND: ${{ env.DOCKER_IMAGE_BACKEND }}
+          DOCKER_IMAGE_FRONTEND: ${{ env.DOCKER_IMAGE_FRONTEND }}
+          DOCKER_IMAGE_TAG: ${{ steps.tag.outputs.IMAGE_TAG }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          API_PORT: ${{ env.API_PORT }}
 
-      # 4️⃣ 성공 로그
+      # 5️⃣ 성공 로그
       - name: Notify Success
         if: success()
         run: |
@@ -68,7 +87,7 @@ jobs:
           echo "Repository: ${{ github.repository }}"
           echo "Commit: ${{ github.sha }}"
 
-      # 5️⃣ 실패 로그
+      # 6️⃣ 실패 로그
       - name: Notify Failure
         if: failure()
         run: |
