@@ -1,4 +1,4 @@
-name: CI - web09-web-os-emulation
+name: CI - 2Ryuk Pipeline
 
 on:
   pull_request:
