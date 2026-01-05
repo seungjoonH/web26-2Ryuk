@@ -7,11 +7,11 @@
       "currentCount": 5,
       "maxCount": 10,
       "participants": [
-        { "id": "user1", "avatar": "https://i.pravatar.cc/150?img=1" },
-        { "id": "user2", "avatar": "https://i.pravatar.cc/150?img=2" },
-        { "id": "user3", "avatar": "https://i.pravatar.cc/150?img=3" },
-        { "id": "user4", "avatar": "https://i.pravatar.cc/150?img=4" },
-        { "id": "user5", "avatar": "https://i.pravatar.cc/150?img=5" }
+        { "id": "user1", "nickname": "John Doe", "avatar": "https://i.pravatar.cc/150?img=1" },
+        { "id": "user2", "nickname": "Jane Smith", "avatar": "https://i.pravatar.cc/150?img=2" },
+        { "id": "user3", "nickname": "Alice Kim", "avatar": "https://i.pravatar.cc/150?img=3" },
+        { "id": "user4", "nickname": "Bob Lee", "avatar": "https://i.pravatar.cc/150?img=4" },
+        { "id": "user5", "nickname": "Charlie Park", "avatar": "https://i.pravatar.cc/150?img=5" }
       ]
     },
     {
@@ -21,9 +21,9 @@
       "currentCount": 3,
       "maxCount": 6,
       "participants": [
-        { "id": "user4", "avatar": "https://i.pravatar.cc/150?img=4" },
-        { "id": "user5", "avatar": "https://i.pravatar.cc/150?img=5" },
-        { "id": "user6", "avatar": "https://i.pravatar.cc/150?img=6" }
+        { "id": "user4", "nickname": "Bob Lee", "avatar": "https://i.pravatar.cc/150?img=4" },
+        { "id": "user5", "nickname": "Charlie Park", "avatar": "https://i.pravatar.cc/150?img=5" },
+        { "id": "user6", "nickname": "Dana Choi", "avatar": "https://i.pravatar.cc/150?img=6" }
       ]
     },
     {
@@ -33,11 +33,11 @@
       "currentCount": 5,
       "maxCount": 10,
       "participants": [
-        { "id": "user6", "avatar": "https://i.pravatar.cc/150?img=6" },
-        { "id": "user7", "avatar": "https://i.pravatar.cc/150?img=7" },
-        { "id": "user8", "avatar": "https://i.pravatar.cc/150?img=8" },
-        { "id": "user9", "avatar": "https://i.pravatar.cc/150?img=9" },
-        { "id": "user10", "avatar": "https://i.pravatar.cc/150?img=10" }
+        { "id": "user6", "nickname": "Dana Choi", "avatar": "https://i.pravatar.cc/150?img=6" },
+        { "id": "user7", "nickname": "Emily Kwon", "avatar": "https://i.pravatar.cc/150?img=7" },
+        { "id": "user8", "nickname": "Frank Jung", "avatar": "https://i.pravatar.cc/150?img=8" },
+        { "id": "user9", "nickname": "Grace Lim", "avatar": "https://i.pravatar.cc/150?img=9" },
+        { "id": "user10", "nickname": "Henry Oh", "avatar": "https://i.pravatar.cc/150?img=10" }
       ]
     },
     {
@@ -47,11 +47,11 @@
       "currentCount": 5,
       "maxCount": 6,
       "participants": [
-        { "id": "user9", "avatar": "https://i.pravatar.cc/150?img=9" },
-        { "id": "user10", "avatar": "https://i.pravatar.cc/150?img=10" },
-        { "id": "user1", "avatar": "https://i.pravatar.cc/150?img=1" },
-        { "id": "user2", "avatar": "https://i.pravatar.cc/150?img=2" },
-        { "id": "user3", "avatar": "https://i.pravatar.cc/150?img=3" }
+        { "id": "user9", "nickname": "Grace Lim", "avatar": "https://i.pravatar.cc/150?img=9" },
+        { "id": "user10", "nickname": "Henry Oh", "avatar": "https://i.pravatar.cc/150?img=10" },
+        { "id": "user1", "nickname": "John Doe", "avatar": "https://i.pravatar.cc/150?img=1" },
+        { "id": "user2", "nickname": "Jane Smith", "avatar": "https://i.pravatar.cc/150?img=2" },
+        { "id": "user3", "nickname": "Alice Kim", "avatar": "https://i.pravatar.cc/150?img=3" }
       ]
     },
     {
@@ -61,8 +61,8 @@
       "currentCount": 2,
       "maxCount": 2,
       "participants": [
-        { "id": "user2", "avatar": "https://i.pravatar.cc/150?img=2" },
-        { "id": "user3", "avatar": "https://i.pravatar.cc/150?img=3" }
+        { "id": "user2", "nickname": "Jane Smith", "avatar": "https://i.pravatar.cc/150?img=2" },
+        { "id": "user3", "nickname": "Alice Kim", "avatar": "https://i.pravatar.cc/150?img=3" }
       ]
     }
   ]
