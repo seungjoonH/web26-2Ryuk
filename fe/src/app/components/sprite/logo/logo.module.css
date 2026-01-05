@@ -1,0 +1,36 @@
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo.small {
+  gap: 16px;
+}
+
+.logo.medium {
+  gap: 24px;
+}
+
+.logo.large {
+  gap: 32px;
+}
+
+.logo.clickable {
+  cursor: pointer;
+}
+
+.title {
+  color: var(--primary-6);
+}
+
+.logo.small .title {
+  font: var(--display-1);
+}
+
+.logo.medium .title {
+  font: var(--large-1);
+}
+
+.logo.large .title {
+  font: var(--hero-1);
+}

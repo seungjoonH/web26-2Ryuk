@@ -1,0 +1,9 @@
+export type SpriteAnimationVariant = 'default' | 'drop';
+export type SpriteAnimationSize = 'small' | 'medium' | 'large';
+
+export interface SpriteAnimationProps {
+  variant: SpriteAnimationVariant;
+  size: SpriteAnimationSize;
+  autoPlay?: boolean;
+  loop?: boolean;
+}

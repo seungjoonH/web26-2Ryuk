@@ -1,0 +1,85 @@
+.sprite {
+  position: relative;
+  overflow: hidden;
+}
+
+.spriteWrapper {
+  transform-origin: 0 0;
+}
+
+.sprite object {
+  display: block;
+}
+
+/* Size: Small */
+.sprite.small {
+  --sprite-width: 100px;
+  width: var(--sprite-width);
+  height: var(--sprite-width);
+}
+
+.sprite.small .spriteWrapper {
+  width: calc(var(--sprite-width) * var(--frames));
+  height: var(--sprite-width);
+}
+
+.sprite.small object {
+  width: calc(var(--sprite-width) * var(--frames));
+  height: var(--sprite-width);
+}
+
+/* Size: Medium */
+.sprite.medium {
+  --sprite-width: 200px;
+  width: var(--sprite-width);
+  height: var(--sprite-width);
+}
+
+.sprite.medium .spriteWrapper {
+  width: calc(var(--sprite-width) * var(--frames));
+  height: var(--sprite-width);
+}
+
+.sprite.medium object {
+  width: calc(var(--sprite-width) * var(--frames));
+  height: var(--sprite-width);
+}
+
+/* Size: Large */
+.sprite.large {
+  --sprite-width: 400px;
+  width: var(--sprite-width);
+  height: var(--sprite-width);
+}
+
+.sprite.large .spriteWrapper {
+  width: calc(var(--sprite-width) * var(--frames));
+  height: var(--sprite-width);
+}
+
+.sprite.large object {
+  width: calc(var(--sprite-width) * var(--frames));
+  height: var(--sprite-width);
+}
+
+/* Animation */
+.spriteWrapper.playing {
+  animation: play var(--duration) steps(var(--frames)) forwards;
+}
+
+.spriteWrapper.playing.loop {
+  animation-iteration-count: infinite;
+}
+
+.spriteWrapper.playing.once {
+  animation-iteration-count: 1;
+}
+
+@keyframes play {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(var(--sprite-width) * var(--frames) * -1));
+  }
+}
