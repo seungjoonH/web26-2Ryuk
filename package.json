@@ -45,12 +45,25 @@
     "docker:restart:fe": "docker compose -f docker-compose-local.yml restart client",
     "docker:restart:be": "docker compose -f docker-compose-local.yml restart server",
     "docker:exec:fe": "docker compose -f docker-compose-local.yml exec client sh",
-    "docker:exec:be": "docker compose -f docker-compose-local.yml exec server sh"
+    "docker:exec:be": "docker compose -f docker-compose-local.yml exec server sh",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.0.0"
+  },
+  "lint-staged": {
+    "be/src/**/*.{ts,tsx}": [
+      "pnpm --filter be eslint --fix",
+      "prettier --write"
+    ],
+    "fe/src/**/*.{ts,tsx}": [
+      "pnpm --filter fe eslint --fix",
+      "prettier --write"
+    ]
   }
 }
