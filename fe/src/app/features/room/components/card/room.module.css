@@ -1,0 +1,48 @@
+.roomCard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 200px;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--primary-1);
+}
+
+.roomCardTop {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.roomCardHeader {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.roomCardTitle {
+  font: var(--title-2);
+  color: var(--neutral-9);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roomCardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.roomCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

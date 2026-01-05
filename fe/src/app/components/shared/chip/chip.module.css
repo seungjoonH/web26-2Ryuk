@@ -1,0 +1,94 @@
+/* Base */
+.chip {
+  --large-size: 24px;
+  --medium-size: 16px;
+  --small-size: 12px;
+
+  display: flex;
+  gap: 4px;
+  font: var(--body-1);
+  border-radius: 52px;
+  white-space: nowrap;
+}
+
+.chip .label {
+  display: flex;
+  align-items: center;
+}
+
+/* Size: Large */
+.chip.large {
+  padding: 8px 16px;
+}
+
+.chip.large .label {
+  font: var(--tag-large);
+  height: var(--large-size);
+}
+
+.chip.large svg {
+  width: var(--large-size);
+  height: var(--large-size);
+}
+
+/* Size: Medium */
+.chip.medium {
+  padding: 4px 12px;
+}
+
+.chip.medium .label {
+  font: var(--tag-medium);
+  height: var(--medium-size);
+}
+
+.chip.medium svg {
+  width: var(--medium-size);
+  height: var(--medium-size);
+}
+
+/* Size: Small */
+.chip.small {
+  padding: 4px 8px;
+}
+
+.chip.small .label {
+  font: var(--tag-small);
+  height: var(--small-size);
+}
+
+.chip.small svg {
+  width: var(--small-size);
+  height: var(--small-size);
+}
+
+/* Variant */
+.chip.default {
+  background: var(--neutral-3);
+  color: var(--neutral-5);
+}
+
+.chip.primary {
+  background: var(--primary-6);
+  color: var(--primary-1);
+}
+
+.chip.secondary {
+  background: var(--primary-3);
+  color: var(--primary-6);
+}
+
+.chip.outline {
+  background: var(--neutral-1);
+  color: var(--secondary);
+  box-shadow: inset 0 0 0 2px var(--neutral-3);
+}
+
+/* ToggleChip */
+.toggleChip {
+  display: inline-block;
+}
+
+.toggleChip:hover > .chip {
+  opacity: 0.8;
+  cursor: pointer !important;
+}

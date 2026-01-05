@@ -1,0 +1,12 @@
+.page {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  padding: 40px 0;
+  background: var(--primary-3);
+}
+
+.page > .content {
+  width: 1200px;
+  margin: 0 40px;
+}

@@ -1,0 +1,90 @@
+:root {
+  /* Font Family */
+  --pretendard:
+    -apple-system, BlinkMacSystemFont, 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+
+  /* Primary Colors */
+  --primary: #2b6cee;
+  --on-primary: #e3f2fd;
+  --primary-1: #f5faff;
+  --primary-2: #edf6fe;
+  --primary-3: #e3f2fd;
+  --primary-4: #cde6fb;
+  --primary-5: #8bc4f3;
+  --primary-6: #60a5fa;
+  --primary-7: #2b6cee;
+  --primary-8: #1449c1;
+  --primary-9: #0432b0;
+
+  /* Gradient Colors */
+  --gradient-primary: linear-gradient(90deg, var(--primary-6) 0%, var(--primary-7) 100%);
+  --gradient-primary-2: linear-gradient(45deg, #f5faff 0%, #ffffff 60%);
+
+  /* Neutral Colors */
+  --neutral: #0d121b;
+  --on-neutral: #f0f0f0;
+  --neutral-1: #ffffff;
+  --neutral-2: #f7f7f7;
+  --neutral-3: #f0f0f0;
+  --neutral-4: #d4d4d4;
+  --neutral-5: #aaaaaa;
+  --neutral-6: #757575;
+  --neutral-7: #454545;
+  --neutral-8: #222222;
+  --neutral-9: #0d121b;
+
+  /* Semantic Colors */
+  --success: #28a745;
+  --error: #ff4b4b;
+  --warning: #ffc107;
+  --secondary: #64748b;
+
+  /* Typography - Large */
+  --large-1: 900 40px/normal var(--pretendard);
+  --large-2: 700 20px/normal var(--pretendard);
+
+  /* Typography - Hero */
+  --hero-1: 900 56px/normal var(--pretendard);
+
+  /* Typography - Display */
+  --display-1: 700 24px/normal var(--pretendard);
+
+  /* Typography - Heading */
+  --heading-1: 700 20px/normal var(--pretendard);
+  --heading-2: 600 16px/normal var(--pretendard);
+  --heading-3: 700 12px/normal var(--pretendard);
+  --heading-4: 400 12px/normal var(--pretendard);
+
+  /* Typography - Body */
+  --body-1: 400 12px/normal var(--pretendard);
+  --body-2: 400 16px/normal var(--pretendard);
+  --body-3: 400 16px/normal var(--pretendard);
+  --body-4: 400 24px/normal var(--pretendard);
+  --body-5: 400 24px/normal var(--pretendard);
+
+  /* Typography - Button */
+  --button-large: 700 24px/normal var(--pretendard);
+  --button-medium: 700 20px/normal var(--pretendard);
+  --button-small: 700 12px/normal var(--pretendard);
+
+  /* Typography - Textfield */
+  --textfield-1: 400 16px/normal var(--pretendard);
+  --textfield-2: 400 28px/normal var(--pretendard);
+
+  /* Typography - Label */
+  --label-1: 400 16px/normal var(--pretendard);
+  --label-2: 400 12px/normal var(--pretendard);
+
+  /* Typography - Tag */
+  --tag-large: 400 18px/normal var(--pretendard);
+  --tag-medium: 400 12px/normal var(--pretendard);
+  --tag-small: 400 8px/normal var(--pretendard);
+
+  /* Typography - Title */
+  --title-1: 600 16px/normal var(--pretendard);
+  --title-2: 600 16px/normal var(--pretendard);
+  --title-3: 400 20px/normal var(--pretendard);
+
+  /* Typography - Caption */
+  --caption: 500 8px/normal var(--pretendard);
+}

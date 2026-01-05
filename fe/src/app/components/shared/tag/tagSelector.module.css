@@ -1,0 +1,13 @@
+.tagSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 240px;
+  width: 100%;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

@@ -18,6 +18,9 @@ RUN pnpm install --frozen-lockfile --prod=false --filter fe...
 COPY fe ./fe
 
 # Build application (static export via output: 'export')
+ARG NEXT_PUBLIC_API_URL=http://localhost
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
 WORKDIR /app/fe
 RUN pnpm build
 

@@ -1,0 +1,61 @@
+.toggle {
+  position: relative;
+  display: flex;
+  width: 40px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.toggle:disabled {
+  cursor: not-allowed;
+  background: var(--neutral-5);
+}
+
+.track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--neutral-4);
+  border-radius: 12px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.toggle.checked .track {
+  background: var(--primary-6);
+}
+
+.thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: var(--neutral-1);
+  border-radius: 50%;
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 2px 4px #0000001a;
+}
+
+.toggle.checked .thumb {
+  transform: translateX(16px);
+}
+
+.input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+  margin: 0;
+}
+
+.toggle.disabled .input {
+  cursor: not-allowed;
+}
+
+.toggle.disabled .track {
+  background: var(--neutral-5);
+}

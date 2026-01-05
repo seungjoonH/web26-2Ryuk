@@ -1,0 +1,25 @@
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 기본 스타일 */
+.topSection {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  gap: 40px;
+}
+
+.desktop .topSection {
+  flex-direction: row;
+}
+
+.tablet .topSection {
+  flex-direction: row;
+}
+
+.mobile .topSection {
+  flex-direction: column;
+}

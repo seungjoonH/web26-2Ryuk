@@ -1,0 +1,62 @@
+.postListItem {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  padding: 12px 32px;
+  border-radius: 52px;
+  flex-direction: column;
+  background: var(--primary-1);
+  list-style: none;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.title {
+  font: var(--heading-2);
+  color: var(--neutral-9);
+  flex: 1;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metrics {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: var(--body-1);
+  color: var(--secondary);
+}
+
+.metric svg {
+  color: var(--secondary);
+}
+
+.timestamp {
+  font: var(--body-1);
+  color: var(--secondary);
+}
