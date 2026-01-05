@@ -1,4 +1,4 @@
-import IS from '../utils/is';
+import IS from '@/utils/is';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
