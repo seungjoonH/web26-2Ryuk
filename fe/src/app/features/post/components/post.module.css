@@ -1,0 +1,35 @@
+.postListItems {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.popularPosts {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  min-width: 480px;
+  border-radius: 52px;
+  padding: 32px 40px;
+  background: var(--neutral-1);
+}
+
+.popularPostsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popularPostsTitle {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.popularPostsTitleText {
+  font: var(--display-1);
+  color: var(--neutral-9);
+  margin: 0;
+}

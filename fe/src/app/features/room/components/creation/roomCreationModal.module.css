@@ -1,0 +1,36 @@
+.modal {
+  width: 580px;
+  background: var(--neutral-1);
+  border-radius: 24px;
+  border: 2px solid var(--primary-3);
+  overflow: hidden;
+  box-shadow: 0 2px 8px #0000001a;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 48px;
+  background: var(--primary-2);
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 72px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.title {
+  font: var(--heading-1);
+  color: var(--neutral-9);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font: var(--heading-2);
+  color: var(--secondary);
+}
