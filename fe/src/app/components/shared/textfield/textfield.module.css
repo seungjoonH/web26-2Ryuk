@@ -1,0 +1,95 @@
+.textField {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 40px;
+  padding: 16px 20px;
+  transition: all 0.2s ease-in-out;
+  cursor: text;
+}
+
+.textField .input {
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: var(--textfield-1);
+  color: var(--neutral-9);
+  padding: 0;
+}
+
+.textField .input::placeholder {
+  color: var(--neutral-5);
+}
+
+.textField .input:disabled {
+  cursor: not-allowed;
+  color: var(--neutral-4);
+}
+
+.textField .iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  width: auto;
+  height: auto;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.textField .iconButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.textField .iconButton svg {
+  color: var(--secondary);
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Variant - Primary */
+.primary {
+  background: var(--primary-1);
+}
+
+.primary .input::placeholder {
+  color: var(--neutral-6);
+}
+
+.primary:focus-within {
+  box-shadow: inset 0 0 0 1px var(--primary-5);
+}
+
+/* Variant - Outline */
+.outline {
+  background: var(--neutral-1);
+  box-shadow: inset 0 0 0 1px var(--primary-5);
+}
+
+.outline:focus-within {
+  box-shadow: inset 0 0 0 1px var(--primary-6);
+}
+
+.outline.disabled {
+  background: var(--neutral-2);
+  box-shadow: inset 0 0 0 1px var(--neutral-4);
+}
+
+/* Variant - Default */
+.default {
+  background: var(--neutral-2);
+  box-shadow: inset 0 0 0 1px var(--neutral-4);
+}
+
+.default:focus-within {
+  box-shadow: inset 0 0 0 1px var(--neutral-5);
+}

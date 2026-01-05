@@ -1,0 +1,20 @@
+.stepper {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-width: 160px;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--neutral-3);
+  border-radius: 52px;
+  border: 1px solid var(--neutral-4);
+}
+
+.stepper svg {
+  color: var(--secondary);
+}
+
+.value {
+  font: var(--title-1);
+  color: var(--secondary);
+}

@@ -1,0 +1,140 @@
+.circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--neutral-2);
+  color: var(--neutral-9);
+  box-sizing: content-box;
+}
+
+svg.small {
+  width: 16px;
+  height: 16px;
+}
+
+.small svg.small {
+  padding: 8px;
+}
+
+svg.medium {
+  width: 24px;
+  height: 24px;
+}
+
+.medium svg.medium {
+  padding: 16px;
+}
+
+svg.large {
+  width: 32px;
+  height: 32px;
+}
+
+.large svg.large {
+  padding: 24px;
+}
+
+.primary {
+  background: var(--primary-6);
+  color: var(--primary-1);
+}
+
+.secondary {
+  background: var(--primary-3);
+  color: var(--primary-6);
+}
+
+.outline,
+.ghost {
+  background: transparent;
+  color: var(--secondary);
+}
+
+.outline {
+  border: 2px solid var(--neutral-3);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.button .circle {
+  transition: all 0.2s ease-in-out;
+}
+
+.button:focus-visible .circle {
+  outline: 2px solid var(--primary-5);
+  outline-offset: 2px;
+}
+
+.button:disabled .circle {
+  cursor: not-allowed;
+}
+
+.button:hover .circle.primary {
+  background: var(--primary-7);
+}
+
+.button:active .circle.primary {
+  background: var(--primary-9);
+}
+
+.button:disabled .circle.primary {
+  background: var(--neutral-4);
+  color: var(--neutral-3);
+}
+
+.button:hover .circle.secondary {
+  background: var(--primary-4);
+}
+
+.button:active .circle.secondary {
+  background: var(--primary-5);
+}
+
+.button:disabled .circle.secondary {
+  background: var(--neutral-3);
+  color: var(--neutral-4);
+}
+
+.button:hover .circle.outline {
+  background: var(--neutral-2);
+}
+
+.button:active .circle.outline {
+  background: var(--neutral-4);
+}
+
+.button:disabled .circle.outline {
+  background: var(--neutral-2);
+  color: var(--neutral-4);
+  border-color: var(--neutral-3);
+}
+
+.button:hover .circle.ghost {
+  background: var(--neutral-2);
+}
+
+.button:active .circle.ghost {
+  background: var(--neutral-4);
+}
+
+.button:disabled .circle.ghost {
+  background: transparent;
+}
+
+.button:disabled .circle.ghost svg {
+  color: var(--neutral-4);
+}
+
+.icon {
+  box-sizing: content-box;
+}
