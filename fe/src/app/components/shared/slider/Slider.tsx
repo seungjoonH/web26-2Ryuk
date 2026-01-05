@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ChangeEvent } from 'react';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import styles from './slider.module.css';
 import { SliderProps } from './type';
 

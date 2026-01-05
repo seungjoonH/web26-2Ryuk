@@ -2,7 +2,7 @@ import styles from './logo.module.css';
 import Image from 'next/image';
 import Paths from '@/app/shared/path';
 import { LogoImageProps, LogoSize, LogoProps } from './type';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 
 const SIZE_MAP: Record<LogoSize, number> = { small: 36, medium: 60, large: 100 };
 

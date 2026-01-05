@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './pageTitleSection.module.css';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import useResponsive from '@/app/hooks/useResponsive';
 import {
   BoardPageTitleSectionProps,

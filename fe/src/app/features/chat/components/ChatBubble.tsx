@@ -3,8 +3,8 @@
 import { ChatBubbleProps } from './chat.type';
 import Avatar from '@/app/components/shared/profile/Avatar';
 import styles from './chatBubble.module.css';
-import CSSUtil from '@/app/utils/css';
-import DateUtil from '@/app/utils/date';
+import CSSUtil from '@/utils/css';
+import DateUtil from '@/utils/date';
 import Rules from '@/app/shared/rule';
 
 function ChatBubble({

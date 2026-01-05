@@ -1,4 +1,4 @@
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import styles from './chip.module.css';
 import { ChipProps } from './type';
 import Icon, { IconSize } from '@/app/components/shared/icon/Icon';

@@ -3,7 +3,7 @@
 import Toggle from './Toggle';
 import styles from './labeledToggle.module.css';
 import { useState } from 'react';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import Icon from '@/app/components/shared/icon/Icon';
 import { LabeledToggleProps } from './type';
 

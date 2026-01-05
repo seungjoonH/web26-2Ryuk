@@ -2,7 +2,7 @@ import { memo } from 'react';
 import Paths from '@/app/shared/path';
 import styles from './icon.module.css';
 import { IconProps } from './type';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 
 export type { IconVariant, IconSize } from './type';
 

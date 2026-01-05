@@ -1,5 +1,5 @@
 import styles from '@/app/components/helpers/components.module.css';
-import IconUtil from '@/app/utils/icon';
+import IconUtil from '@/utils/icon';
 import Icon from '@/app/components/shared/icon/Icon';
 import IconCircleDefault from '@/app/components/shared/icon/IconCircle';
 import * as IconCircle from '@/app/components/shared/icon/IconCircle';

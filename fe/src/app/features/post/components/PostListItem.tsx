@@ -3,8 +3,8 @@
 import styles from './postListItem.module.css';
 import { OutlineChip } from '@/app/components/shared/chip/Chip';
 import Icon from '@/app/components/shared/icon/Icon';
-import DateUtil from '@/app/utils/date';
-import NumberUtil from '@/app/utils/number';
+import DateUtil from '@/utils/date';
+import NumberUtil from '@/utils/number';
 import { PostListItemProps } from './type';
 
 function PostListItem({

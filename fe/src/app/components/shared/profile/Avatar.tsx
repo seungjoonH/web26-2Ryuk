@@ -4,7 +4,7 @@ import styles from './avatar.module.css';
 import Paths from '@/app/shared/path';
 import Image from 'next/image';
 import { AvatarProps } from './type';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 
 const DEFAULT_AVATAR = Paths.images('default_profile');
 

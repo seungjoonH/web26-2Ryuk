@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import styles from './components.module.css';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 
 interface Section {
   id: string;

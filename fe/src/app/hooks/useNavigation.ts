@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/app/shared/routes';
-import IS from '@/app/utils/is';
+import IS from '@/utils/is';
 import { ComponentCategory, getCategoryPath } from '@/app/components/helpers/type';
 
 export default function useNavigation() {

@@ -1,4 +1,4 @@
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import styles from './button.module.css';
 import { TextButtonProps } from './type';
 import Icon from '@/app/components/shared/icon/Icon';

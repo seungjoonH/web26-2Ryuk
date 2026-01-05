@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './components.module.css';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 
 export default function TabNavigation() {
   const pathname = usePathname();

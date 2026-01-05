@@ -7,7 +7,7 @@ import MessageForm from '@/app/components/shared/form/message/MessageForm';
 import { GlobalChatHeaderProps, GlobalChatProps } from './type';
 import * as IconCircle from '@/app/components/shared/icon/IconCircle';
 import { GhostIconButton } from '@/app/components/shared/icon/IconButton';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 
 function GlobalChatHeader({ onlineCount, isCollapsed, onToggle }: GlobalChatHeaderProps) {
   const iconName = isCollapsed ? 'up' : 'down';

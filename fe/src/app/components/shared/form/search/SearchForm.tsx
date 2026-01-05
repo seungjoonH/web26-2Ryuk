@@ -2,7 +2,7 @@
 
 import { useState, useRef, type ChangeEvent, type KeyboardEvent, type FocusEvent } from 'react';
 import styles from './searchForm.module.css';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import Icon from '@/app/components/shared/icon/Icon';
 import { SearchFormProps } from './type';
 

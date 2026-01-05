@@ -1,7 +1,7 @@
 'use client';
 
 import useResponsive from '@/app/hooks/useResponsive';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import styles from './page.module.css';
 import { PageClientProps } from '../type';
 

@@ -1,5 +1,5 @@
 import styles from './avatar.module.css';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import { AvatarCountProps } from './type';
 
 function AvatarCount({ count, onClick }: AvatarCountProps) {

@@ -1,5 +1,5 @@
-import ParseUtil from '@/app/utils/parse';
-import DateUtil from '@/app/utils/date';
+import ParseUtil from '@/utils/parse';
+import DateUtil from '@/utils/date';
 import { ChatData, ChatDto, GlobalChatData, GlobalChatDto } from './type';
 import Rules from '@/app/shared/rule';
 

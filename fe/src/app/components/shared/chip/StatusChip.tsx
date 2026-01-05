@@ -1,4 +1,4 @@
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import styles from './statusChip.module.css';
 import { StatusChipProps } from './type';
 

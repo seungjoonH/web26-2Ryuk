@@ -1,4 +1,4 @@
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import Icon from './Icon';
 import styles from './icon.module.css';
 import { IconCircleProps } from './type';

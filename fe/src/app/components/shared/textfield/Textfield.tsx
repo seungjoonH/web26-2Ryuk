@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, type ChangeEvent } from 'react';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import styles from './textfield.module.css';
 import { TextfieldProps } from './type';
 import Icon from '@/app/components/shared/icon/Icon';

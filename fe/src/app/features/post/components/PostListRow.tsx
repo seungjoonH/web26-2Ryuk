@@ -2,9 +2,9 @@
 
 import styles from './postListRow.module.css';
 import { DefaultChip, PrimaryChip, SecondaryChip } from '@/app/components/shared/chip/Chip';
-import DateUtil from '@/app/utils/date';
+import DateUtil from '@/utils/date';
 import { PostListRowProps } from './type';
-import NumberUtil from '@/app/utils/number';
+import NumberUtil from '@/utils/number';
 import { PostCategory } from '@/app/features/post/dtos/type';
 
 function PostCategoryChip({ category }: { category: PostCategory }) {

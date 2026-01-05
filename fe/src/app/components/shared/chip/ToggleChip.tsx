@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import styles from './chip.module.css';
 import { ToggleChipProps } from './type';
 import { ChipBase } from './Chip';

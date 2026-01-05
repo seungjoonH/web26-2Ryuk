@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import styles from './textTooltip.module.css';
 import { TextTooltipProps } from './type';
 import type { TextTooltipPosition } from './type';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 
 export default function TextTooltip({ text, anchorId }: TextTooltipProps) {
   const tooltipRef = useRef<HTMLDivElement>(null);

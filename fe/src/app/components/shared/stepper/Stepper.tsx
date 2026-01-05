@@ -4,7 +4,7 @@ import styles from './stepper.module.css';
 import { GhostIconButton } from '@/app/components/shared/icon/IconButton';
 import { useState } from 'react';
 import { StepperProps } from './type';
-import IS from '@/app/utils/is';
+import IS from '@/utils/is';
 
 export default function Stepper({
   initialValue = 0,

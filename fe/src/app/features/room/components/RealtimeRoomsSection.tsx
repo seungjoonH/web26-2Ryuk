@@ -7,7 +7,7 @@ import * as TextButton from '@/app/components/shared/button/TextButton';
 import SearchForm from '@/app/components/shared/form/search/SearchForm';
 import { RealtimeRoomsSectionProps } from './type';
 import useResponsive from '@/app/hooks/useResponsive';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 
 export default function RealtimeRoomsSection({
   rooms,

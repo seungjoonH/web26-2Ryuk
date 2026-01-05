@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import IS from '@/app/utils/is';
+import IS from '@/utils/is';
 
 const DEVICE_TYPES = ['desktop', 'tablet', 'mobile'] as const;
 export type DeviceType = (typeof DEVICE_TYPES)[number];

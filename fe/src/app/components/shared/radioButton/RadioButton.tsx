@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent } from 'react';
 import styles from './radioButton.module.css';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import { RadioButtonProps } from './type';
 
 export default function RadioButton({

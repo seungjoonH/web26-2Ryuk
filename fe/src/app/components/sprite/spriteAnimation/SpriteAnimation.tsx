@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import CSSUtil from '@/app/utils/css';
+import CSSUtil from '@/utils/css';
 import styles from './spriteAnimation.module.css';
 import { SpriteAnimationProps } from './type';
 import Paths from '@/app/shared/path';
