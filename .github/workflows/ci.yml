@@ -55,6 +55,4 @@ jobs:
 
       - name: Build client
         working-directory: fe
-        env:
-          NEXT_PUBLIC_API_URL: ""
         run: pnpm build
