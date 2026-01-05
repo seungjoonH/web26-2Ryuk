@@ -10,7 +10,7 @@ import postListCardMock from './data/postListCard.json';
 import postListTableMock from './data/postListTable.json';
 import profilesMock from './data/profiles.json';
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
 export const handlers = [
   // Rooms API

@@ -1,3 +1,4 @@
+import '@/mocks/server';
 import GlobalChat from './GlobalChat';
 import { globalChatService } from '../services/GlobalChatService';
 

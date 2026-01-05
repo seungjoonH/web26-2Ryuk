@@ -11,19 +11,22 @@ import { handlers } from './handlers';
 
 export const server = setupServer(...handlers);
 
-// 개발 환경에서 서버 컴포넌트 실행 전에 MSW 서버 초기화
-if (process.env.NODE_ENV === 'development' && process.env.NEXT_RUNTIME === 'nodejs') {
-  if (!server.listHandlers().length) server.listen({ onUnhandledRequest: 'bypass' });
+// 서버 컴포넌트 실행 전에 MSW 서버 초기화 (빌드 시점 포함)
+if (process.env.NEXT_RUNTIME === 'nodejs') {
+  server.listen({ onUnhandledRequest: 'bypass' });
 
-  server.events.on('request:start', ({ request }) => {
-    console.log('[MSW] Intercepted:', request.method, request.url);
-  });
+  // 개발 환경에서만 로그 출력
+  if (process.env.NODE_ENV === 'development') {
+    server.events.on('request:start', ({ request }) => {
+      console.log('[MSW] Intercepted:', request.method, request.url);
+    });
 
-  server.events.on('request:match', ({ request }) => {
-    console.log('[MSW] Matched handler:', request.method, request.url);
-  });
+    server.events.on('request:match', ({ request }) => {
+      console.log('[MSW] Matched handler:', request.method, request.url);
+    });
 
-  server.events.on('request:unhandled', ({ request }) => {
-    console.warn('[MSW] Unhandled request:', request.method, request.url);
-  });
+    server.events.on('request:unhandled', ({ request }) => {
+      console.warn('[MSW] Unhandled request:', request.method, request.url);
+    });
+  }
 }

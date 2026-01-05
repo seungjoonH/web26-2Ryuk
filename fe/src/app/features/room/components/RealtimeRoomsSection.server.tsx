@@ -1,3 +1,4 @@
+import '@/mocks/server';
 import RealtimeRoomsSection from './RealtimeRoomsSection';
 import roomService from '../services/RoomService';
 import { RoomConverter } from '../dtos/Room';

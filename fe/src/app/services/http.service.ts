@@ -3,7 +3,7 @@ import IS from '@/utils/is';
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export class HttpService {
-  private static readonly BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  private static readonly BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   private static async request<T>(url: string, method: HttpMethod, body?: unknown): Promise<T> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };

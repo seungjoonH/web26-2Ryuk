@@ -1,3 +1,4 @@
+import '@/mocks/server';
 import PopularPosts from './PopularPosts';
 import postService from '../services/PostsService';
 import { PostConverter } from '../dtos/Post';
