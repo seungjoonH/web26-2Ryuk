@@ -4,6 +4,8 @@ services:
   api:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGE_BACKEND}:${DOCKER_IMAGE_TAG:-latest}
     container_name: server
+    env_file:
+      - .env
     environment:
       NODE_ENV: production
       PORT: ${API_PORT}
