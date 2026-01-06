@@ -5,6 +5,12 @@ dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+console.log(
+  'Database Config - isProduction:',
+  isProduction,
+  process.env.NODE_ENV,
+);
+
 const databaseConfig: DataSourceOptions = {
   type: 'mysql',
   host: process.env.DB_HOST || 'localhost',
@@ -18,7 +24,7 @@ const databaseConfig: DataSourceOptions = {
       ? 'dist/database/migrations/*.js'
       : 'src/database/migrations/*.ts',
   ],
-  synchronize: !isProduction,
+  synchronize: false,
   logging: !isProduction,
 };
 

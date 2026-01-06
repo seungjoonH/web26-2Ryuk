@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "type-check": "tsc --noEmit",
-    "migration:gen": "pnpm typeorm migration:generate -d src/database/data-source.ts",
+		"typeorm": "ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:gen": "pnpm typeorm migration:generate -d src/database/data-source.ts src/database/migrations/Migration",
     "migration:run": "pnpm typeorm migration:run -d src/database/data-source.ts",
     "migration:revert": "pnpm typeorm migration:revert -d src/database/data-source.ts",
     "migration:create": "pnpm typeorm migration:create src/database/migrations/init"
