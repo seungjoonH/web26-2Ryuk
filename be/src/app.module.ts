@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import databaseConfig from './providers/database/database.config';
@@ -11,11 +10,8 @@ import { RedisModule } from './providers/redis/redis.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
-    TypeOrmModule.forRoot(databaseConfig),
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRoot({ ...databaseConfig, entities: [] }),
     RedisModule,
     ChatModule,
     AuthModule,

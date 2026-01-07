@@ -61,9 +61,34 @@ jobs:
       # 6) Build & Push Backend Image
       - name: Build & Push Backend Image
         if: steps.bump.outputs.tag != ''      # ← merge commit일 때만 실행
+        env:
+          # GitHub Secrets에서 프로덕션 환경변수 주입
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
         run: |
           VERSION=${{ steps.bump.outputs.tag }}
           echo "🚀 Building Backend Image: $VERSION"
+
+          # .env.production 파일 생성 (GitHub Secrets에서)
+          mkdir -p be
+          cat > be/.env.production << EOF
+          DB_HOST=${DB_HOST}
+          DB_PORT=${DB_PORT}
+          DB_USERNAME=${DB_USERNAME}
+          DB_PASSWORD=${DB_PASSWORD}
+          DB_NAME=${DB_NAME}
+          REDIS_HOST=${REDIS_HOST}
+          REDIS_PORT=${REDIS_PORT}
+          NODE_ENV=production
+          PORT=4000
+          FRONTEND_URL=${FRONTEND_URL}
+          EOF
 
           docker build \
             --build-arg NODE_ENV=production \

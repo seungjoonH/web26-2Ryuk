@@ -1,14 +1,11 @@
-import { config } from 'dotenv';
-import { resolve } from 'path';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { RedisIoAdapter } from './providers/redis/redis-io.adapter';
 import { REDIS_CLIENT } from './providers/redis/redis.provider';
+import { loadEnv } from './config/env';
 
-// 환경 변수 로드
-const nodeEnv = process.env.NODE_ENV || 'development';
-config({ path: resolve(process.cwd(), `.env.${nodeEnv}`) });
+loadEnv();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,7 +17,7 @@ async function bootstrap() {
 
   // CORS 설정
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

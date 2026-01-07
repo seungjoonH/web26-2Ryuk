@@ -1,12 +1,10 @@
 import { DataSourceOptions } from 'typeorm';
-import * as dotenv from 'dotenv';
+import { loadEnv } from '@src/config/env';
 
-dotenv.config();
+// 공통 ENV 로더 사용
+loadEnv();
 
 const isProduction = process.env.NODE_ENV === 'production';
-
-console.log('Database Config - isProduction:', isProduction, process.env.NODE_ENV);
-
 const databaseConfig: DataSourceOptions = {
   type: 'mysql',
   host: process.env.DB_HOST || 'localhost',
