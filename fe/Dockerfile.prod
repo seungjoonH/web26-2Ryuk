@@ -12,7 +12,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY fe/package.json ./fe/
 
 # Install dependencies for frontend workspace
-RUN pnpm install --frozen-lockfile --prod=false --filter fe...
+# --ignore-scripts: prepare 스크립트(husky) 실행 건너뛰기 (Docker 빌드에서는 불필요)
+RUN pnpm install --frozen-lockfile --prod=false --ignore-scripts --filter fe...
 
 # Copy source code
 COPY fe ./fe
