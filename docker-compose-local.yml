@@ -1,4 +1,20 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: eryuk-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - eryuk_network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   server:
     build:
       context: .
@@ -9,10 +25,15 @@ services:
       NODE_ENV: development
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
-      - "3000:3000"
+      - "4000:4000"
     volumes:
       - ./be:/app/be:cached   # 소스만 부분 바인드
+    depends_on:
+      redis:
+        condition: service_healthy
     networks:
       - eryuk_network
 
@@ -41,3 +62,6 @@ services:
 networks:
   eryuk_network:
     driver: bridge
+
+volumes:
+  redis_data:
