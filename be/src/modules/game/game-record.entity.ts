@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { PrimaryUuidColumn, UuidColumn } from '@src/common/decorators/primary-uuid-column.decorator';
-import { User } from '@src/user/user.entity';
-import { Game } from '@src/game/game.entity';
+import { User } from '@src/modules/user/user.entity';
+import { Game } from '@src/modules/game/game.entity';
 
 @Entity('game_record')
 export class GameRecord {

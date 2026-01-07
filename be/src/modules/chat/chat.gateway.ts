@@ -10,12 +10,12 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger, UsePipes, ValidationPipe, Inject, OnModuleInit } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { RoomsService } from '@/modules/rooms/rooms.service';
+import { RoomService } from '@src/modules/room/room.service';
 import { GlobalChatSendDto, RoomChatSendDto } from './dto/chat-message.dto';
-import { RoomJoinDto, RoomLeaveDto } from '@/modules/rooms/dto/room.dto';
-import { REDIS_CLIENT } from '@/providers/redis/redis.provider';
+import { RoomJoinDto, RoomLeaveDto } from '@src/modules/room/dto/room.dto';
+import { REDIS_CLIENT } from '@src/providers/redis/redis.provider';
 import { RedisClientType } from 'redis';
-import { LOG, logMessage } from '@/shared/log-messages';
+import { LOG, logMessage } from '@src/common/utils/log-messages';
 
 @WebSocketGateway({ namespace: '/' })
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -27,13 +27,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   constructor(
     private readonly chatService: ChatService,
-    private readonly roomsService: RoomsService,
+    private readonly roomService: RoomService,
     @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
   ) {}
 
   onModuleInit() {
     // Redis 클라이언트를 RoomsService에 설정
-    this.roomsService.setRedisClient(this.redisClient);
+    this.roomService.setRedisClient(this.redisClient);
   }
 
   /**
@@ -64,7 +64,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     logMessage(this.logger, LOG.WS.DISCONNECT(client.id, userId));
 
     // 모든 방에서 제거
-    if (userId) await this.roomsService.leaveAllRooms(userId);
+    if (userId) await this.roomService.leaveAllRooms(userId);
   }
 
   /**
@@ -104,7 +104,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     // 권한 검증: 해당 방의 참여자인지 확인
-    const isInRoom = await this.roomsService.isUserInRoom(userId, dto.roomId);
+    const isInRoom = await this.roomService.isUserInRoom(userId, dto.roomId);
     if (!isInRoom) {
       logMessage(this.logger, LOG.CHAT.NOT_MEMBER_SEND(userId, dto.roomId));
       client.emit('error', { message: '해당 방에 참여하지 않았습니다.' });
@@ -132,7 +132,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     // 권한 검증: 방 입장 권한 확인
-    const canJoin = await this.roomsService.canUserJoinRoom(userId, dto.roomId);
+    const canJoin = await this.roomService.canUserJoinRoom(userId, dto.roomId);
     if (!canJoin) {
       logMessage(this.logger, LOG.ROOM.NO_PERMISSION(userId, dto.roomId));
       client.emit('error', { message: '방 입장 권한이 없습니다.' });
@@ -140,7 +140,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     // 이미 참여 중인지 확인
-    const isInRoom = await this.roomsService.isUserInRoom(userId, dto.roomId);
+    const isInRoom = await this.roomService.isUserInRoom(userId, dto.roomId);
     if (isInRoom) {
       logMessage(this.logger, LOG.ROOM.ALREADY_IN(userId, dto.roomId));
       client.emit('room:joined', { roomId: dto.roomId });
@@ -148,13 +148,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     // 이미 다른 로컬 방에 참여 중인지 확인
-    const existingLocalRoom = await this.roomsService.getUserLocalRoom(userId);
+    const existingLocalRoom = await this.roomService.getUserLocalRoom(userId);
     if (existingLocalRoom && existingLocalRoom !== dto.roomId) {
       // 기존 로컬 방에서 퇴장 처리
       logMessage(this.logger, LOG.ROOM.JOIN_SWITCH(userId, existingLocalRoom, dto.roomId));
 
       // 기존 방에서 제거
-      await this.roomsService.leaveRoom(userId, existingLocalRoom);
+      await this.roomService.leaveRoom(userId, existingLocalRoom);
       client.leave(existingLocalRoom);
 
       // 다른 참여자에게 알림
@@ -162,7 +162,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     // 논리적 상태 변경: 방에 참여
-    await this.roomsService.joinRoom(userId, dto.roomId, client.id);
+    await this.roomService.joinRoom(userId, dto.roomId, client.id);
 
     // Socket.io room에 참여 (브로드캐스트 최적화용)
     client.join(dto.roomId);
@@ -193,7 +193,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     // 참여 중인지 확인
-    const isInRoom = await this.roomsService.isUserInRoom(userId, dto.roomId);
+    const isInRoom = await this.roomService.isUserInRoom(userId, dto.roomId);
     if (!isInRoom) {
       logMessage(this.logger, LOG.ROOM.NOT_IN(userId, dto.roomId));
       client.emit('error', { message: '해당 방에 참여하지 않았습니다.' });
@@ -201,7 +201,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     // 논리적 상태 변경: 방에서 퇴장
-    await this.roomsService.leaveRoom(userId, dto.roomId);
+    await this.roomService.leaveRoom(userId, dto.roomId);
 
     // Socket.io room에서 제거
     client.leave(dto.roomId);

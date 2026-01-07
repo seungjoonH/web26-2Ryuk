@@ -1,7 +1,7 @@
 import { Entity, ManyToOne, JoinColumn } from 'typeorm';
 import { PrimaryUuidColumn } from '@src/common/decorators/primary-uuid-column.decorator';
-import { Post } from '@src/post/post.entity';
-import { User } from '@src/user/user.entity';
+import { Post } from '@src/modules/post/post.entity';
+import { User } from '@src/modules/user/user.entity';
 
 @Entity('post-like')
 export class PostLike {

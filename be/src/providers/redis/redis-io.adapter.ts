@@ -3,7 +3,7 @@ import { ServerOptions, Socket } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { RedisClientType } from 'redis';
 import type { ExtendedError } from 'socket.io/dist/namespace';
-import { MockAuthService } from '@/modules/auth/mock-auth.service';
+import { MockAuthService } from '@src/modules/auth/mock-auth.service';
 
 export class RedisIoAdapter extends IoAdapter {
   private adapterConstructor: ReturnType<typeof createAdapter>;

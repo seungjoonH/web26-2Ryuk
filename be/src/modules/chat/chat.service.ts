@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Server } from 'socket.io';
-import { LOG, logMessage } from '@/shared/log-messages';
+import { LOG, logMessage } from '@src/common/utils/log-messages';
 
 @Injectable()
 export class ChatService {
