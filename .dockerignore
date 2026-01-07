@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+# Docker files
+.dockerignore
+Dockerfile
+Dockerfile.*
+# Dependencies - These are installed within the container
+**/node_modules
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# Environment variables - These are injected at runtime
+**/.env
+**/.env.*
+!.env.example
+# 프로덕션 빌드 시 GitHub Actions에서 생성되는 파일은 예외 처리
+!be/.env.production
+# Build & output directories
+**/dist
+**/build
+**/.next
+**/out
+**/coverage
+# Project-specific files
+.husky
+.temp
+fe/src/mocks
+# Editor & OS files
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

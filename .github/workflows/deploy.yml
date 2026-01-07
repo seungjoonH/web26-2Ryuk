@@ -14,7 +14,7 @@ env:
   DOCKER_IMAGE_BACKEND: ${{ secrets.DOCKER_IMAGE_NAME }}-backend
   DOCKER_IMAGE_FRONTEND: ${{ secrets.DOCKER_IMAGE_NAME }}-frontend
   DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || '~/project' }}
-  API_PORT: ${{ secrets.API_PORT || 3000 }}
+  API_PORT: ${{ secrets.API_PORT }}
 
 jobs:
   deploy:

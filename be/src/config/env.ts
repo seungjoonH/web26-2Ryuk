@@ -1,0 +1,9 @@
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+export function loadEnv() {
+  const nodeEnv = process.env.NODE_ENV || 'development';
+  const filename = `.env.${nodeEnv}`;
+
+  config({ path: resolve(process.cwd(), filename) });
+}

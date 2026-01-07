@@ -39,6 +39,9 @@ RUN pnpm install --frozen-lockfile --prod --filter be...
 # Copy built application from builder
 COPY --from=base /app/be/dist/ ./be/dist/
 
+# Copy production environment file (GitHub Actions에서 생성됨)
+COPY be/.env.production ./be/.env.production
+
 # Set environment variables
 ARG NODE_ENV=production
 ARG VERSION=latest
