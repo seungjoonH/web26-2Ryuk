@@ -44,11 +44,13 @@ jobs:
           host: ${{ secrets.NCP_HOST }}
           username: ${{ secrets.NCP_USERNAME }}
           key: ${{ secrets.NCP_SSH_PRIVATE_KEY }}
-          # 전송할 파일/폴더 지정 (프로젝트 구조에 맞게 수정)
+          port: ${{ secrets.NCP_SSH_PORT }}
+          timeout: 60s
+          command_timeout: 300s
           source: 'docker-compose.yml,infra/,nginx/'
           target: ${{ env.DEPLOY_PATH }}
-          # 기존 파일을 덮어쓰도록 설정
           overwrite: true
+          debug: true
 
       # 4️⃣ SSH 접속 및 배포 스크립트 실행
       - name: SSH into NCP and deploy
@@ -57,10 +59,12 @@ jobs:
           host: ${{ secrets.NCP_HOST }}
           username: ${{ secrets.NCP_USERNAME }}
           key: ${{ secrets.NCP_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.NCP_SSH_PORT}}
+          timeout: 60s
+          command_timeout: 300s
           # 셸 환경변수로 필요한 데이터 전달
           envs: DOCKER_USERNAME,DOCKER_PASSWORD,DOCKER_IMAGE_BACKEND,DOCKER_IMAGE_FRONTEND,DOCKER_IMAGE_TAG,DEPLOY_PATH,API_PORT
           script_stop: true
-          timeout: 300s
           script: |
             set -e
             echo "[INFO] Connecting to server..."
