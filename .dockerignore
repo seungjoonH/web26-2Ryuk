@@ -27,7 +27,6 @@ pnpm-debug.log*
 # Project-specific files
 .husky
 .temp
-fe/src/mocks
 # Editor & OS files
 .vscode
 *.suo
