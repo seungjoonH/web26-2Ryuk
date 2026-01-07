@@ -1,18 +1,57 @@
 services:
+  db:
+    image: mysql:8.0
+    container_name: eryuk-mysql
+    env_file:
+      - ./be/.env.development
+    volumes:
+      # MySQL 초기화 스크립트 (컨테이너가 처음 시작될 때만 실행됨)
+      - ./infra/mysql/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      - eryuk_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: eryuk-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - eryuk_network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   server:
     build:
       context: .
       dockerfile: be/Dockerfile
     container_name: eryuk-server
     working_dir: /app
+    env_file:
+      - ./be/.env.development
     environment:
-      NODE_ENV: development
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"
     ports:
-      - "3000:3000"
+      - "4000:4000"
     volumes:
       - ./be:/app/be:cached   # 소스만 부분 바인드
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_healthy
     networks:
       - eryuk_network
 
@@ -22,6 +61,9 @@ services:
       dockerfile: fe/Dockerfile
     container_name: eryuk-client
     working_dir: /app
+    command: pnpm --filter fe dev
+    env_file:
+      - ./fe/.env.development
     environment:
       NODE_ENV: development
       # 파일 감시를 위한 환경 변수 (Docker 환경에서 핫 리로드 지원)
@@ -41,3 +83,6 @@ services:
 networks:
   eryuk_network:
     driver: bridge
+
+volumes:
+  redis_data:

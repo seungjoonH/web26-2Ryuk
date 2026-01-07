@@ -2,3 +2,9 @@ packages:
   - fe
   - be
 
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - esbuild
+  - msw
+  - sharp
+  - unrs-resolver

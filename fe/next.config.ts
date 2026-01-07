@@ -3,23 +3,19 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   reactCompiler: true,
   output: 'export',
-  
-  // 개발 환경 설정
-  ...(process.env.NODE_ENV === 'development' && {
-    // 개발 서버 설정
-    devIndicators: {
-      position: 'bottom-right',
-    },
-  }),
+  images: { unoptimized: true },
+  devIndicators: { position: 'bottom-right' },
 
-  // 리버스 프록시 설정 (Vite의 proxy와 유사)
+  // 리버스 프록시 설정
+  // USE_REAL_API=true 일 때만 활성화 (MSW 사용 시 비활성화)
   async rewrites() {
+    if (!process.env.USE_REAL_API) return [];
+
+    const apiServerUrl = process.env.NEXT_PUBLIC_API_SERVER_URL || 'http://server:3000';
     return [
       {
         source: '/api/:path*',
-        destination: process.env.NODE_ENV === 'development' 
-          ? `http://server:3000/api/:path*`  // Docker Compose 서비스 이름 사용
-          : '/api/:path*',  // 프로덕션에서는 같은 서버
+        destination: `${apiServerUrl}/api/:path*`,
       },
     ];
   },

@@ -1,0 +1,12 @@
+[
+  { "id": "user1", "avatar": "https://i.pravatar.cc/150?img=1" },
+  { "id": "user2", "avatar": "https://i.pravatar.cc/150?img=2" },
+  { "id": "user3", "avatar": "https://i.pravatar.cc/150?img=3" },
+  { "id": "user4", "avatar": "https://i.pravatar.cc/150?img=4" },
+  { "id": "user5", "avatar": "https://i.pravatar.cc/150?img=5" },
+  { "id": "user6", "avatar": "https://i.pravatar.cc/150?img=6" },
+  { "id": "user7", "avatar": "https://i.pravatar.cc/150?img=7" },
+  { "id": "user8", "avatar": "https://i.pravatar.cc/150?img=8" },
+  { "id": "user9", "avatar": "https://i.pravatar.cc/150?img=9" },
+  { "id": "user10", "avatar": "https://i.pravatar.cc/150?img=10" }
+]

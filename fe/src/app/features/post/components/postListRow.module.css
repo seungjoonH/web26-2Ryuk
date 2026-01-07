@@ -1,0 +1,87 @@
+.postListRow {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  padding: 12px 32px;
+  align-items: center;
+  list-style: none;
+}
+
+.category {
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 120px;
+  flex: 1;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title {
+  font: var(--heading-2);
+  color: var(--primary-6);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.description {
+  font: var(--label-2);
+  color: var(--secondary);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.author {
+  width: 20%;
+  max-width: 120px;
+  font: var(--label-1);
+  color: var(--primary-6);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timestamp {
+  width: 20%;
+  max-width: 120px;
+  font: var(--body-2);
+  color: var(--secondary);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric {
+  width: 20%;
+  max-width: 120px;
+  font: var(--body-2);
+  color: var(--secondary);
+  text-align: center;
+}

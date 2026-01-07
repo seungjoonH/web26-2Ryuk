@@ -1,0 +1,33 @@
+{
+  "totalCount": 402,
+  "posts": [
+    {
+      "id": "1",
+      "title": "MBTI 별 대화 스타일 공감 ㅋㅋㅋㅋ",
+      "content": "MBTI별로 대화 스타일이 다르다는 게 너무 공감돼요 ㅋㅋㅋ",
+      "tags": ["#MBTI", "#공감"],
+      "viewCount": 125,
+      "likeCount": 50,
+      "commentCount": 3,
+      "createDate": "2025-12-29T14:30:00",
+      "updateDate": "2025-12-29T14:30:00",
+      "authorId": "user1",
+      "authorNickname": "작성자1",
+      "isMe": false
+    },
+    {
+      "id": "2",
+      "title": "새벽에 듣기 좋은 플레이리스트 추천",
+      "content": "새벽에 혼자 있을 때 듣기 좋은 플레이리스트 추천해요",
+      "tags": ["#노래", "#공감", "#플리"],
+      "viewCount": 1240,
+      "likeCount": 360,
+      "commentCount": 45,
+      "createDate": "2025-12-28T14:30:00",
+      "updateDate": "2025-12-28T14:30:00",
+      "authorId": "user2",
+      "authorNickname": "작성자2",
+      "isMe": false
+    }
+  ]
+}

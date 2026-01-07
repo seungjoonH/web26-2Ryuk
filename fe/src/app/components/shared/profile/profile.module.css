@@ -1,0 +1,15 @@
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile.clickable {
+  cursor: pointer;
+}
+
+.nickname {
+  font: var(--title-2);
+  color: var(--neutral-9);
+  padding: 0 12px;
+}

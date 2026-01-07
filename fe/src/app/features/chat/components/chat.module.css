@@ -1,0 +1,84 @@
+.globalChat {
+  min-width: 480px;
+  max-height: 800px;
+  background: var(--neutral-1);
+  border-radius: 40px;
+  border: 2px solid var(--primary-3);
+  overflow: hidden;
+  box-shadow: 0 2px 8px #0000001a;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.globalChat.collapsed {
+  max-height: fit-content;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--primary-3);
+}
+
+.headerContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font: var(--heading-2);
+  color: var(--neutral-9);
+  margin-bottom: 4px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: var(--body-2);
+  color: var(--neutral-6);
+}
+
+.onlineDot {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
+  transition: all 0.3s ease-in-out;
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+}
+
+.globalChat.collapsed .content {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.chatBubbles {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  gap: 28px;
+  padding: 40px;
+  background: var(--gradient-primary-2);
+}
+
+.messageForm {
+  padding: 16px 20px;
+  border-top: 1px solid var(--neutral-3);
+  background: var(--neutral-1);
+  flex-shrink: 0;
+}

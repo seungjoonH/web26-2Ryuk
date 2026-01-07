@@ -1,19 +1,52 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { RedisIoAdapter } from './providers/redis/redis-io.adapter';
+import { REDIS_CLIENT } from './providers/redis/redis.provider';
+import { loadEnv } from './config/env';
+
+loadEnv();
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
-	
-	// Health check endpoint
-	app.getHttpAdapter().get('/health', (req, res) => {
-		res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
-	});
-	
-	await app.listen(3000);
+  const app = await NestFactory.create(AppModule);
+
+  // 상태 체크 엔드포인트
+  app.getHttpAdapter().get('/health', (_, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  // CORS 설정
+  app.enableCors({
+    origin: process.env.FRONTEND_URL,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
+  // 전역 파이프 설정 (DTO 유효성 검사)
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
+  // Redis WebSocket 어댑터 연결 (공유 Redis 클라이언트 사용)
+  const redisClient = app.get(REDIS_CLIENT);
+  const redisIoAdapter = new RedisIoAdapter(app);
+  await redisIoAdapter.connectToRedis(redisClient);
+  app.useWebSocketAdapter(redisIoAdapter);
+
+  // 전역 접두사 설정
+  app.setGlobalPrefix('api');
+
+  // 서버 포트 실행
+  const port = process.env.PORT || 4000;
+  await app.listen(port);
+  console.log(`Server is running on: http://localhost:${port}/api`);
 }
 
 bootstrap().catch((err) => {
   console.error('Error starting server:', err);
   process.exit(1);
 });
-

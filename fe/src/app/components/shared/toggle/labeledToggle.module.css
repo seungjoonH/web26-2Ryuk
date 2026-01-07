@@ -1,0 +1,44 @@
+.labeledToggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  padding: 16px;
+  background: var(--neutral-3);
+  border: 1px solid var(--neutral-4);
+  border-radius: 32px;
+  transition: all 0.2s ease-in-out;
+}
+
+.labeledToggle.checked {
+  background: var(--primary-2);
+  border: 1px solid var(--primary-5);
+}
+
+.toggleHeader {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.toggleHeader svg {
+  color: var(--secondary);
+}
+
+.iconWrapper {
+  width: 24px;
+  height: 24px;
+}
+
+.label {
+  width: 100%;
+  font: var(--title-1);
+  color: var(--secondary);
+}
+
+.content {
+  width: 100%;
+}

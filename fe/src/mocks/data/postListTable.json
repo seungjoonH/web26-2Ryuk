@@ -1,0 +1,33 @@
+{
+  "totalCount": 402,
+  "posts": [
+    {
+      "id": "1",
+      "title": "12월 서버 안정화를 위한 정기 점검 안내",
+      "content": "보다 쾌적한 환경을 제공하기 위해 12월 25일 새벽 2시부터 4시까지 정기 점검을 실시합니다.",
+      "viewCount": 898,
+      "likeCount": 80,
+      "commentCount": 12,
+      "createDate": "2025-12-29T14:30:00",
+      "updateDate": "2025-12-29T14:30:00",
+      "authorId": "admin",
+      "authorNickname": "운영자",
+      "isMe": false,
+      "isNotice": true
+    },
+    {
+      "id": "2",
+      "title": "새벽에 듣기 좋은 플레이리스트 추천",
+      "content": "새벽에 혼자 있을 때 듣기 좋은 플레이리스트 추천해요",
+      "viewCount": 1240,
+      "likeCount": 360,
+      "commentCount": 45,
+      "createDate": "2025-12-28T14:30:00",
+      "updateDate": "2025-12-28T14:30:00",
+      "authorId": "user2",
+      "authorNickname": "작성자2",
+      "isMe": false,
+      "isNotice": false
+    }
+  ]
+}
