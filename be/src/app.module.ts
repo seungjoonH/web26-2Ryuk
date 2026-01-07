@@ -1,12 +1,25 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import databaseConfig from './database/database.config';
 import { ChatModule } from './modules/chat/chat.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RedisModule } from './providers/redis/redis.module';
 
 @Module({
-  imports: [RedisModule, ChatModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    TypeOrmModule.forRoot(databaseConfig),
+    RedisModule,
+    ChatModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
