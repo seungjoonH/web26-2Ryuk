@@ -1,8 +1,5 @@
 import { Entity, Column, CreateDateColumn, Index } from 'typeorm';
-import {
-  PrimaryUuidColumn,
-  UuidColumn,
-} from '@src/common/decorators/primary-uuid-column.decorator';
+import { PrimaryUuidColumn, UuidColumn } from '@src/common/decorators/primary-uuid-column.decorator';
 
 export enum RoomType {
   GLOBAL = 'GLOBAL',

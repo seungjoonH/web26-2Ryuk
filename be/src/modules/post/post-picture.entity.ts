@@ -1,9 +1,6 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import {
-  PrimaryUuidColumn,
-  UuidColumn,
-} from '@src/common/decorators/primary-uuid-column.decorator';
-import { Post } from '@src/post/post.entity';
+import { PrimaryUuidColumn, UuidColumn } from '@src/common/decorators/primary-uuid-column.decorator';
+import { Post } from '@src/modules/post/post.entity';
 
 @Entity('post_picture')
 export class PostPicture {

@@ -1,0 +1,55 @@
+import { Controller, Post, Get, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { MockAuthService } from './mock-auth.service';
+import { MockLoginDto, MockUserResponseDto } from './dto/mock-login.dto';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private readonly mockAuthService: MockAuthService) {}
+
+  /**
+   * 개발용 Mock 로그인 (토큰 발급)
+   * POST /api/auth/mock/login
+   */
+  @Post('mock/login')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  mockLogin(@Body() dto: MockLoginDto) {
+    // Mock 사용자 확인
+    const user = this.mockAuthService.getMockUserById(dto.userId);
+    if (!user) {
+      return {
+        success: false,
+        message: '존재하지 않는 Mock 사용자입니다.',
+      };
+    }
+
+    // Mock 토큰 발급
+    const token = this.mockAuthService.generateMockToken(dto.userId);
+
+    return {
+      success: true,
+      token,
+      userId: dto.userId,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    };
+  }
+
+  /**
+   * 개발용 Mock 사용자 목록 반환
+   * GET /api/auth/mock/users
+   */
+  @Get('mock/users')
+  getMockUsers(): { users: MockUserResponseDto[] } {
+    const users = this.mockAuthService.getMockUsers();
+    return {
+      users: users.map((user) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      })),
+    };
+  }
+}

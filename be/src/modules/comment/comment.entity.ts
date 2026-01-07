@@ -1,17 +1,7 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import {
-  PrimaryUuidColumn,
-  UuidColumn,
-} from '@src/common/decorators/primary-uuid-column.decorator';
-import { Post } from '@src/post/post.entity';
-import { User } from '@src/user/user.entity';
+import { Entity, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { PrimaryUuidColumn, UuidColumn } from '@src/common/decorators/primary-uuid-column.decorator';
+import { Post } from '@src/modules/post/post.entity';
+import { User } from '@src/modules/user/user.entity';
 
 @Entity('comment')
 export class Comment {

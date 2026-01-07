@@ -4,7 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import databaseConfig from './database/database.config';
+import databaseConfig from './providers/database/database.config';
+import { ChatModule } from './modules/chat/chat.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { RedisModule } from './providers/redis/redis.module';
 
 @Module({
   imports: [
@@ -13,6 +16,9 @@ import databaseConfig from './database/database.config';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRoot(databaseConfig),
+    RedisModule,
+    ChatModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

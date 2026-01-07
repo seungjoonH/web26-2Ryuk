@@ -1,17 +1,6 @@
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
-import {
-  PrimaryUuidColumn,
-  UuidColumn,
-} from '@src/common/decorators/primary-uuid-column.decorator';
-import { User } from '@src/user/user.entity';
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { PrimaryUuidColumn, UuidColumn } from '@src/common/decorators/primary-uuid-column.decorator';
+import { User } from '@src/modules/user/user.entity';
 
 export enum PostType {
   NORMAL = 'NORMAL',

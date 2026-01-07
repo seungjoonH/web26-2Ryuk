@@ -5,11 +5,7 @@ dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-console.log(
-  'Database Config - isProduction:',
-  isProduction,
-  process.env.NODE_ENV,
-);
+console.log('Database Config - isProduction:', isProduction, process.env.NODE_ENV);
 
 const databaseConfig: DataSourceOptions = {
   type: 'mysql',
@@ -19,11 +15,7 @@ const databaseConfig: DataSourceOptions = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: [isProduction ? 'dist/**/*.entity.js' : 'src/**/*.entity.ts'],
-  migrations: [
-    isProduction
-      ? 'dist/database/migrations/*.js'
-      : 'src/database/migrations/*.ts',
-  ],
+  migrations: [isProduction ? 'dist/database/migrations/*.js' : 'src/database/migrations/*.ts'],
   synchronize: false,
   logging: !isProduction,
 };

@@ -18,9 +18,9 @@ RUN pnpm install --frozen-lockfile --filter be...
 COPY be ./be
 
 # Expose port
-EXPOSE 3000
+EXPOSE 4000
 
 # Start development server
-WORKDIR /app/be
-CMD ["pnpm", "dev"]
+WORKDIR /app
+CMD ["pnpm", "--filter", "be", "dev"]
 
