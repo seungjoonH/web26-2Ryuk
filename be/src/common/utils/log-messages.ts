@@ -115,6 +115,14 @@ export const LOG = {
       message: `권한 검증: userId=${userId}, roomId=${roomId}`,
       level: 'debug',
     }),
+    INITIALIZED: {
+      message: `RoomService가 Redis 클라이언트와 함께 초기화되었습니다.`,
+      level: 'log',
+    },
+    ERROR_INITIALIZING_GLOBAL_ROOM: (error: string): LogMessage => ({
+      message: `글로벌 방 초기화 중 오류 발생: ${error}`,
+      level: 'error',
+    }),
   },
 } as const;
 
