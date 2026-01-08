@@ -1,169 +1,36 @@
 {
   "rooms": [
     {
-      "id": "1",
-      "host_id": "user1",
+      "id": "3f1c8c6a-7a4a-4a6c-9b7e-0b5c7f3a9f21",
       "title": "노래 부를 사람~",
-      "tags": ["#노래", "#친목"],
+      "tags": ["노래", "잡담"],
       "current_participants": 5,
       "max_participants": 10,
       "is_mic_available": true,
       "is_private": false,
-      "participants": [
-        {
-          "id": "user1",
-          "nickname": "John Doe",
-          "profile_image": "https://i.pravatar.cc/150?img=1"
-        },
-        {
-          "id": "user2",
-          "nickname": "Jane Smith",
-          "profile_image": "https://i.pravatar.cc/150?img=2"
-        },
-        {
-          "id": "user3",
-          "nickname": "Alice Kim",
-          "profile_image": "https://i.pravatar.cc/150?img=3"
-        },
-        {
-          "id": "user4",
-          "nickname": "Bob Lee",
-          "profile_image": "https://i.pravatar.cc/150?img=4"
-        },
-        {
-          "id": "user5",
-          "nickname": "Charlie Park",
-          "profile_image": "https://i.pravatar.cc/150?img=5"
-        }
+      "participant_profile_images": [
+        "https://i.pravatar.cc/150?img=1",
+        "https://i.pravatar.cc/150?img=2",
+        "https://i.pravatar.cc/150?img=3",
+        "https://i.pravatar.cc/150?img=4",
+        "https://i.pravatar.cc/150?img=5"
       ],
       "create_date": "2026-01-06T07:10:00Z"
     },
     {
-      "id": "2",
-      "host_id": "user4",
+      "id": "1a8b0c2d-55e4-4e2a-9e2a-9b4a12345678",
       "title": "재밌게 게임해요!",
-      "tags": ["#게임"],
+      "tags": ["게임"],
       "current_participants": 3,
       "max_participants": 6,
       "is_mic_available": true,
       "is_private": false,
-      "participants": [
-        {
-          "id": "user4",
-          "nickname": "Bob Lee",
-          "profile_image": "https://i.pravatar.cc/150?img=4"
-        },
-        {
-          "id": "user5",
-          "nickname": "Charlie Park",
-          "profile_image": "https://i.pravatar.cc/150?img=5"
-        },
-        {
-          "id": "user6",
-          "nickname": "Dana Choi",
-          "profile_image": "https://i.pravatar.cc/150?img=6"
-        }
+      "participant_profile_images": [
+        "https://i.pravatar.cc/150?img=3",
+        "https://i.pravatar.cc/150?img=4",
+        "https://i.pravatar.cc/150?img=5"
       ],
-      "create_date": "2026-01-06T07:15:00Z"
-    },
-    {
-      "id": "3",
-      "host_id": "user6",
-      "title": "시험공부 빡공! 조용히해주세요 제발...",
-      "tags": ["#공부"],
-      "current_participants": 5,
-      "max_participants": 10,
-      "is_mic_available": false,
-      "is_private": false,
-      "participants": [
-        {
-          "id": "user6",
-          "nickname": "Dana Choi",
-          "profile_image": "https://i.pravatar.cc/150?img=6"
-        },
-        {
-          "id": "user7",
-          "nickname": "Emily Kwon",
-          "profile_image": "https://i.pravatar.cc/150?img=7"
-        },
-        {
-          "id": "user8",
-          "nickname": "Frank Jung",
-          "profile_image": "https://i.pravatar.cc/150?img=8"
-        },
-        {
-          "id": "user9",
-          "nickname": "Grace Lim",
-          "profile_image": "https://i.pravatar.cc/150?img=9"
-        },
-        {
-          "id": "user10",
-          "nickname": "Henry Oh",
-          "profile_image": "https://i.pravatar.cc/150?img=10"
-        }
-      ],
-      "create_date": "2026-01-06T07:20:00Z"
-    },
-    {
-      "id": "4",
-      "host_id": "user9",
-      "title": "3:3 게임 하실 분?",
-      "tags": ["#게임", "#친목"],
-      "current_participants": 5,
-      "max_participants": 6,
-      "is_mic_available": true,
-      "is_private": false,
-      "participants": [
-        {
-          "id": "user9",
-          "nickname": "Grace Lim",
-          "profile_image": "https://i.pravatar.cc/150?img=9"
-        },
-        {
-          "id": "user10",
-          "nickname": "Henry Oh",
-          "profile_image": "https://i.pravatar.cc/150?img=10"
-        },
-        {
-          "id": "user1",
-          "nickname": "John Doe",
-          "profile_image": "https://i.pravatar.cc/150?img=1"
-        },
-        {
-          "id": "user2",
-          "nickname": "Jane Smith",
-          "profile_image": "https://i.pravatar.cc/150?img=2"
-        },
-        {
-          "id": "user3",
-          "nickname": "Alice Kim",
-          "profile_image": "https://i.pravatar.cc/150?img=3"
-        }
-      ],
-      "create_date": "2026-01-06T07:25:00Z"
-    },
-    {
-      "id": "5",
-      "host_id": "user2",
-      "title": "일대일 ㄱㄱ?",
-      "tags": ["#게임"],
-      "current_participants": 2,
-      "max_participants": 2,
-      "is_mic_available": true,
-      "is_private": false,
-      "participants": [
-        {
-          "id": "user2",
-          "nickname": "Jane Smith",
-          "profile_image": "https://i.pravatar.cc/150?img=2"
-        },
-        {
-          "id": "user3",
-          "nickname": "Alice Kim",
-          "profile_image": "https://i.pravatar.cc/150?img=3"
-        }
-      ],
-      "create_date": "2026-01-06T07:30:00Z"
+      "create_date": "2026-01-06T06:55:00Z"
     }
   ]
 }
