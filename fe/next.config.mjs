@@ -1,7 +1,5 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
-  reactCompiler: true,
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // output: 'export',
   images: { unoptimized: true },
   devIndicators: { position: 'bottom-right' },
