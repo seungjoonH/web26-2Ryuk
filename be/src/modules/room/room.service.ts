@@ -1,17 +1,49 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { LOG, logMessage } from '@src/common/utils/log-messages';
 
 @Injectable()
-export class RoomService {
+export class RoomService implements OnModuleInit {
   private readonly logger = new Logger(RoomService.name);
-  private redisClient: RedisClientType;
 
   /**
    * Redis 클라이언트 설정
    */
-  setRedisClient(client: RedisClientType) {
-    this.redisClient = client;
+  constructor(@Inject('REDIS_CLIENT') private readonly redisClient: RedisClientType) {}
+
+  onModuleInit() {
+    this.initializeGlobalRoom();
+    logMessage(this.logger, LOG.ROOM.INITIALIZED);
+  }
+
+  private async initializeGlobalRoom() {
+    const roomId = 'global';
+    const metadataKey = `room:${roomId}:metadata`;
+
+    try {
+      const exists = await this.redisClient.exists(metadataKey);
+
+      if (!exists) {
+        // 상세 정보 저장
+        await this.redisClient.hSet(metadataKey, {
+          id: roomId,
+          title: '전체 채팅방',
+          host_id: 'system',
+          type: 'global',
+          is_private: 'false',
+          max_participants: '9999',
+          create_date: new Date().toISOString(),
+        });
+
+        // 방 목록 인덱스에 추가
+        await this.redisClient.sAdd('rooms:all', roomId);
+      }
+    } catch (error) {
+      logMessage(
+        this.logger,
+        LOG.ROOM.ERROR_INITIALIZING_GLOBAL_ROOM(error instanceof Error ? error.message : String(error)),
+      );
+    }
   }
 
   /**

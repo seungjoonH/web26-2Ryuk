@@ -8,7 +8,7 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger, UsePipes, ValidationPipe, Inject, OnModuleInit } from '@nestjs/common';
+import { Logger, UsePipes, ValidationPipe, Inject } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { RoomService } from '@src/modules/room/room.service';
 import { GlobalChatSendDto, RoomChatSendDto } from './dto/chat-message.dto';
@@ -19,7 +19,7 @@ import { LOG, logMessage } from '@src/common/utils/log-messages';
 
 @WebSocketGateway({ namespace: '/' })
 @UsePipes(new ValidationPipe({ transform: true }))
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
@@ -31,11 +31,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
   ) {}
 
-  onModuleInit() {
-    // Redis 클라이언트를 RoomsService에 설정
-    this.roomService.setRedisClient(this.redisClient);
-  }
-
   /**
    * 클라이언트 연결 처리
    * - 글로벌 채팅에 자동 참여 (Socket.io room 사용)
@@ -46,12 +41,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     logMessage(this.logger, LOG.WS.CONNECT(client.id, userId));
 
-    // 글로벌 채팅에 자동 참여 (모든 사용자)
     client.join('global');
 
-    // 인증된 사용자의 경우 추가 초기화
-    if (isAuthenticated && userId) logMessage(this.logger, LOG.WS.AUTH_CONNECT(userId));
-    else logMessage(this.logger, LOG.WS.UNAUTH_CONNECT(client.id));
+    // 2. 인증된 사용자에 대한 처리
+    if (isAuthenticated && userId) {
+      // Redis에 글로벌 방 참여 정보 기록
+      await this.roomService.joinRoom(userId, 'global', client.id);
+      logMessage(this.logger, LOG.WS.AUTH_CONNECT(userId));
+    } else {
+      // 미인증(익명) 사용자 연결 로그
+      logMessage(this.logger, LOG.WS.UNAUTH_CONNECT(client.id));
+    }
   }
 
   /**
