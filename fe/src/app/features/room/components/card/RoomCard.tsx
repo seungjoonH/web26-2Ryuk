@@ -14,7 +14,7 @@ function RoomCard({
   tags,
   currentParticipants,
   maxParticipants,
-  participants,
+  participantProfileImages = [],
 }: RoomCardProps) {
   const remainingCount = maxParticipants - currentParticipants;
 
@@ -49,7 +49,7 @@ function RoomCard({
         )}
       </div>
       <div className={styles.roomCardFooter}>
-        <Avatars profileDataList={participants} />
+        <Avatars profileImages={participantProfileImages} />
         <SecondaryIconButton name="open" size="small" disabled={remainingCount === 0} />
       </div>
     </div>

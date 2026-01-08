@@ -19,7 +19,7 @@ export default function RoomCreationForm({
   const [title, setTitle] = useState(initialData.title || '');
   const [tags, setTags] = useState<string[]>(initialData.tags || []);
   const [maxParticipants, setMaxParticipants] = useState(initialData.maxParticipants || 4);
-  const [micEnabled, setMicEnabled] = useState(initialData.micEnabled ?? true);
+  const [isMicAvailable, setMicAvailable] = useState(initialData.isMicAvailable ?? true);
   const [isPrivate, setIsPrivate] = useState(initialData.isPrivate ?? false);
   const [password, setPassword] = useState(initialData.password || '');
 
@@ -29,7 +29,7 @@ export default function RoomCreationForm({
       title: title.trim(),
       tags: tags,
       maxParticipants: maxParticipants,
-      micEnabled: micEnabled,
+      isMicAvailable: isMicAvailable,
       isPrivate: isPrivate,
       password: isPrivate ? password : undefined,
     };
@@ -64,7 +64,7 @@ export default function RoomCreationForm({
           </div>
           <div className={styles.halfSection}>
             <label className={styles.label}>대화방 설정</label>
-            <MicSetting initialChecked={micEnabled} onChange={setMicEnabled} />
+            <MicSetting initialChecked={isMicAvailable} onChange={setMicAvailable} />
           </div>
         </div>
 
