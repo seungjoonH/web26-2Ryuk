@@ -4,6 +4,8 @@ services:
     container_name: eryuk-mysql
     env_file:
       - ./be/.env.development
+    ports:
+      - "3307:3306" 
     volumes:
       # MySQL 초기화 스크립트 (컨테이너가 처음 시작될 때만 실행됨)
       - ./infra/mysql/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
