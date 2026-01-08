@@ -11,7 +11,7 @@ import { RedisModule } from './providers/redis/redis.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot({ ...databaseConfig, entities: [] }),
+    TypeOrmModule.forRoot({ ...databaseConfig, entities: [], migrations: [] }),
     RedisModule,
     ChatModule,
     AuthModule,

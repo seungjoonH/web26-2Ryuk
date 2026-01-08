@@ -55,4 +55,4 @@ EXPOSE 4000
 
 # Start application
 WORKDIR /app/be
-CMD ["sh", "-c", "pnpm migration:run && node dist/main.js"]
+CMD ["sh", "-c", "pnpm migration:run:prod && node dist/main.js"]
