@@ -2,7 +2,6 @@ import '@/app/page.css';
 import HeroSection from '@/app/components/layout/heroSection/HeroSection';
 import { PopularPostsSection } from '@/app/features/post/components/PopularPosts.server';
 import RealtimeRoomsSection from '@/app/features/room/components/RealtimeRoomsSection.server';
-import GlobalChatModal from '@/app/features/chat/components/GlobalChat.server';
 import HomePageClient from './client';
 import styles from './page.module.css';
 
@@ -19,9 +18,6 @@ export default function HomePage() {
           </div>
           <RealtimeRoomsSection />
         </div>
-      </div>
-      <div className={styles.globalChatContainer}>
-        <GlobalChatModal />
       </div>
     </HomePageClient>
   );

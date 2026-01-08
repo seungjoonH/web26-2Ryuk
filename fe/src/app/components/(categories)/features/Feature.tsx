@@ -1,5 +1,5 @@
 import styles from '@/app/components/helpers/components.module.css';
-import { ChatBubbles, ChatConverter } from '@/app/features/chat';
+import { ChatBubbles, ChatConverter, GlobalChat } from '@/app/features/chat';
 import ChatBubble from '@/app/features/chat/components/ChatBubble';
 import ChatModalBase from '@/app/features/chat/components/ChatModalBase';
 import PopularPosts from '@/app/features/post/components/PopularPosts';
@@ -10,7 +10,6 @@ import ComponentRelations from '@/app/components/helpers/ComponentRelations';
 import globalChatMock from '@/mocks/data/globalChat.json';
 import postListCardMock from '@/mocks/data/postListCard.json';
 import { PostConverter } from '@/app/features/post/dtos/Post';
-import GlobalChatModal from '@/app/features/chat/components/GlobalChat.server';
 import RoomChatModalServer from '@/app/features/chat/components/RoomChatModal.server';
 import MicSetting from '@/app/features/room/components/creation/MicSetting';
 import PasswordSetting from '@/app/features/room/components/creation/PasswordSetting';
@@ -19,6 +18,7 @@ import RealtimeRoomsSection from '@/app/features/room/components/RealtimeRoomsSe
 import RoomCard from '@/app/features/room/components/card/RoomCard';
 import roomsMock from '@/mocks/data/rooms.json';
 import { RoomConverter } from '@/app/features/room/dtos/Room';
+import GlobalChatModal from '@/app/features/chat/components/GlobalChatModal';
 
 export default function FeatureComponents() {
   return (

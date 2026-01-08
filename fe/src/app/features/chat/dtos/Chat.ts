@@ -1,48 +1,58 @@
-import ParseUtil from '@/utils/parse';
-import DateUtil from '@/utils/date';
-import { ChatData, ChatDto, GlobalChatData, GlobalChatDto } from './type';
-import Rules from '@/app/shared/rule';
-
-const format = Rules.DATETIME_FORMAT.FULL;
+import { ChatReceiveDto, ChatReceiveData, ChatSendDto, ChatSendData } from './type';
 
 export const ChatConverter = {
-  toData(json: ChatDto): ChatData {
+  /**
+   * WebSocket 수신 DTO를 ChatReceiveData로 변환
+   * @param dto WebSocket 이벤트에서 받은 DTO (snake_case)
+   */
+  toReceiveData(dto: ChatReceiveDto): ChatReceiveData {
     return {
-      id: json.id,
-      message: json.message,
-      createDate: ParseUtil.date(json.createDate),
-      updateDate: ParseUtil.date(json.updateDate),
-      authorId: json.authorId,
-      authorNickname: json.authorNickname,
-      isMe: json.isMe,
+      id: `chat_${Date.now()}_${Math.random()}`,
+      message: dto.message,
+      sender: {
+        role: dto.sender.role,
+        nickname: dto.sender.nickname,
+        profileImage: dto.sender.profile_image,
+        isMe: dto.sender.is_me,
+      },
+      timestamp: new Date(dto.timestamp),
     };
   },
 
-  toDto(data: ChatData): ChatDto {
+  /**
+   * ChatReceiveData를 WebSocket 수신 DTO로 변환
+   * @param data ChatReceiveData
+   */
+  toReceiveDto(data: ChatReceiveData): ChatReceiveDto {
     return {
-      id: data.id,
       message: data.message,
-      createDate: DateUtil.format(data.createDate, { format }),
-      updateDate: DateUtil.format(data.updateDate, { format }),
-      authorId: data.authorId,
-      authorNickname: data.authorNickname,
-      isMe: data.isMe,
-    };
-  },
-};
-
-export const GlobalChatConverter = {
-  toData(json: GlobalChatDto): GlobalChatData {
-    return {
-      onlineCount: json.onlineCount,
-      chats: json.chats.map((chat) => ChatConverter.toData(chat)),
+      sender: {
+        role: data.sender.role,
+        nickname: data.sender.nickname,
+        profile_image: data.sender.profileImage,
+        is_me: data.sender.isMe,
+      },
+      timestamp: data.timestamp.toISOString(),
     };
   },
 
-  toDto(data: GlobalChatData): GlobalChatDto {
+  /**
+   * ChatSendData를 WebSocket 전송 DTO로 변환
+   * @param data ChatSendData
+   */
+  toSendDto(data: ChatSendData): ChatSendDto {
     return {
-      onlineCount: data.onlineCount,
-      chats: data.chats.map((chat) => ChatConverter.toDto(chat)),
+      message: data.message,
+    };
+  },
+
+  /**
+   * 메시지 문자열을 ChatSendData로 변환
+   * @param message 전송할 메시지
+   */
+  toSendData(message: string): ChatSendData {
+    return {
+      message,
     };
   },
 };

@@ -1,21 +1,22 @@
 'use client';
 
-import { ChatData } from '@/app/features/chat/dtos/type';
+import { ChatReceiveDto, ChatReceiveData } from '@/app/features/chat/dtos/type';
+import { ChatConverter } from '@/app/features/chat/dtos/Chat';
 import { ChatChannel } from './type';
 import { WebSocketService } from '@/app/services/websocket.service';
 import { authStore } from '@/app/features/user/stores/auth';
 
-type MessageCallback = (message: ChatData) => void;
+type MessageCallback = (message: ChatReceiveData) => void;
 type ConnectionCallback = (isConnected: boolean) => void;
-
-interface GlobalMessageData {
-  userId: string;
-  message: string;
-  timestamp: string;
-}
+type ParticipantsCallback = (count: number) => void;
 
 interface WebSocketError {
   message: string;
+}
+
+interface ParticipantsUpdatedDto {
+  roomId: string;
+  current_participants: number;
 }
 
 /**
@@ -25,23 +26,30 @@ interface WebSocketError {
 export class GlobalChatService implements ChatChannel {
   private messageCallbacks: Set<MessageCallback> = new Set();
   private connectionCallbacks: Set<ConnectionCallback> = new Set();
+  private participantsCallbacks: Set<ParticipantsCallback> = new Set();
   private isSubscribed = false;
-  private messages: ChatData[] = [];
+  private messages: ChatReceiveData[] = [];
 
   /**
    * WebSocket 연결 및 글로벌 채팅 구독
    */
   subscribe(): void {
-    if (this.isSubscribed) {
-      console.warn('[GlobalChatService] Already subscribed');
-      return;
-    }
-
     const wsUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+    // 이미 구독 중이면 재연결 (인증 토큰 업데이트를 위해)
+    if (this.isSubscribed) this.unsubscribe();
+
+    // 이벤트 핸들러 등록 (socket 생성 전에도 등록 가능하도록)
+    this.registerEventHandlers();
+
     WebSocketService.connect(wsUrl);
 
-    this.registerEventHandlers();
-    this.notifyConnection(WebSocketService.isConnected());
+    // 연결 상태는 connect 이벤트 핸들러에서 업데이트됨
+    // 이미 연결된 경우를 대비해 약간의 지연 후 확인 (비동기 연결 완료 대기)
+    setTimeout(() => {
+      if (WebSocketService.isConnected()) this.notifyConnection(true);
+    }, 100);
+
     this.isSubscribed = true;
   }
 
@@ -49,10 +57,25 @@ export class GlobalChatService implements ChatChannel {
    * WebSocket 이벤트 핸들러 등록
    */
   private registerEventHandlers(): void {
-    WebSocketService.on('connect', this.handleConnect.bind(this));
-    WebSocketService.on('disconnect', this.handleDisconnect.bind(this));
-    WebSocketService.on('chat:global:new-message', this.handleGlobalMessage.bind(this));
-    WebSocketService.on('error', this.handleError.bind(this));
+    // connect 핸들러
+    WebSocketService.on('connect', () => this.handleConnect());
+
+    // 다른 이벤트 핸들러들
+    WebSocketService.on('disconnect', () => {
+      this.handleDisconnect();
+    });
+
+    WebSocketService.on('chat:global:new-message', (dto: ChatReceiveDto) => {
+      this.handleGlobalMessage(dto);
+    });
+
+    WebSocketService.on('chat:global:participants-updated', (dto: ParticipantsUpdatedDto) => {
+      this.handleParticipantsUpdated(dto);
+    });
+
+    WebSocketService.on('error', (error: WebSocketError) => {
+      this.handleError(error);
+    });
   }
 
   /**
@@ -60,7 +83,6 @@ export class GlobalChatService implements ChatChannel {
    */
   private handleConnect(): void {
     this.notifyConnection(true);
-    console.log('[GlobalChatService] WebSocket connected');
   }
 
   /**
@@ -68,27 +90,23 @@ export class GlobalChatService implements ChatChannel {
    */
   private handleDisconnect(): void {
     this.notifyConnection(false);
-    console.log('[GlobalChatService] WebSocket disconnected');
   }
 
   /**
    * 글로벌 채팅 메시지 수신 이벤트 핸들러
    */
-  private handleGlobalMessage(data: GlobalMessageData): void {
-    const { userId, message, timestamp } = data;
-    const currentUserId = authStore.getState().userId;
-
-    const chatData: ChatData = {
-      id: `global_${Date.now()}_${Math.random()}`,
-      authorId: userId,
-      authorNickname: '', // TODO: 사용자 정보 조회 필요
-      message,
-      createDate: new Date(timestamp),
-      isMe: userId === currentUserId,
-    };
+  private handleGlobalMessage(dto: ChatReceiveDto): void {
+    const chatData = ChatConverter.toReceiveData(dto);
 
     this.messages.push(chatData);
     this.notifyMessage(chatData);
+  }
+
+  /**
+   * 참여자 수 업데이트 이벤트 핸들러
+   */
+  private handleParticipantsUpdated(dto: ParticipantsUpdatedDto): void {
+    this.notifyParticipants(dto.current_participants);
   }
 
   /**
@@ -96,9 +114,6 @@ export class GlobalChatService implements ChatChannel {
    */
   private handleError(error: WebSocketError): void {
     console.error('[GlobalChatService] WebSocket error:', error);
-    if (error.message === '인증이 필요합니다.') {
-      console.warn('[GlobalChatService] Authentication required');
-    }
   }
 
   /**
@@ -107,11 +122,17 @@ export class GlobalChatService implements ChatChannel {
   unsubscribe(): void {
     if (!this.isSubscribed) return;
 
+    // 연결 상태를 먼저 false로 업데이트
+    this.notifyConnection(false);
+
+    // 모든 이벤트 핸들러 제거
     WebSocketService.off('connect');
     WebSocketService.off('disconnect');
     WebSocketService.off('chat:global:new-message');
+    WebSocketService.off('chat:global:participants-updated');
     WebSocketService.off('error');
 
+    WebSocketService.disconnect();
     this.isSubscribed = false;
   }
 
@@ -121,17 +142,21 @@ export class GlobalChatService implements ChatChannel {
   sendMessage(message: string): void {
     const isAuthenticated = authStore.getState().isAuthenticated;
 
-    if (!isAuthenticated) {
-      alert('메시지를 보내려면 로그인이 필요합니다.');
-      return;
-    }
+    if (!isAuthenticated) throw new Error('메시지를 보내려면 로그인이 필요합니다.');
+    if (!WebSocketService.isConnected()) throw new Error('WebSocket이 연결되지 않았습니다.');
 
-    if (!WebSocketService.isConnected()) {
-      alert('WebSocket이 연결되지 않았습니다.');
-      return;
-    }
+    const sendData = ChatConverter.toSendData(message);
+    const dto = ChatConverter.toSendDto(sendData);
+    WebSocketService.send('chat:global:send', dto);
+  }
 
-    WebSocketService.send('chat:global:send', { message });
+  /**
+   * 로그아웃 알림 (백엔드에 로그아웃 이벤트 전송)
+   * WebSocket 연결은 유지하되, 참여자 수에서 제외됨
+   */
+  notifyLogout(): void {
+    if (!WebSocketService.isConnected()) return;
+    WebSocketService.send('auth:logout', {});
   }
 
   /**
@@ -151,6 +176,14 @@ export class GlobalChatService implements ChatChannel {
   }
 
   /**
+   * 참여자 수 변경 콜백 등록
+   */
+  onParticipantsChange(callback: ParticipantsCallback): () => void {
+    this.participantsCallbacks.add(callback);
+    return () => this.participantsCallbacks.delete(callback);
+  }
+
+  /**
    * 현재 연결 상태 확인
    */
   isConnected(): boolean {
@@ -160,16 +193,20 @@ export class GlobalChatService implements ChatChannel {
   /**
    * 저장된 메시지 가져오기
    */
-  getMessages(): ChatData[] {
+  getMessages(): ChatReceiveData[] {
     return [...this.messages];
   }
 
-  private notifyMessage(message: ChatData): void {
+  private notifyMessage(message: ChatReceiveData): void {
     this.messageCallbacks.forEach((callback) => callback(message));
   }
 
   private notifyConnection(isConnected: boolean): void {
     this.connectionCallbacks.forEach((callback) => callback(isConnected));
+  }
+
+  private notifyParticipants(count: number): void {
+    this.participantsCallbacks.forEach((callback) => callback(count));
   }
 }
 

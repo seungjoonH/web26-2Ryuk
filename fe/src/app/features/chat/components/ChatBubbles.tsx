@@ -11,11 +11,9 @@ function ChatBubbles({ chats }: ChatBubblesProps) {
         <ChatBubble
           key={`chatBubble-${chat.id}`}
           id={chat.id}
-          authorId={chat.authorId}
-          authorNickname={chat.authorNickname}
           message={chat.message}
-          createDate={chat.createDate}
-          isMe={chat.isMe}
+          sender={chat.sender}
+          timestamp={chat.timestamp}
         />
       ))}
     </div>
