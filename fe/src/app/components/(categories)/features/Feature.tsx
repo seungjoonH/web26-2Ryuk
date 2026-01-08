@@ -10,7 +10,7 @@ import ComponentRelations from '@/app/components/helpers/ComponentRelations';
 import globalChatMock from '@/mocks/data/globalChat.json';
 import postListCardMock from '@/mocks/data/postListCard.json';
 import { PostConverter } from '@/app/features/post/dtos/Post';
-import RoomChatModalServer from '@/app/features/chat/components/RoomChatModal.server';
+import RoomChatModal from '@/app/features/chat/components/RoomChatModal';
 import MicSetting from '@/app/features/room/components/creation/MicSetting';
 import PasswordSetting from '@/app/features/room/components/creation/PasswordSetting';
 import RoomCreationModal from '@/app/features/room/components/creation/RoomCreationModal';
@@ -101,7 +101,10 @@ export default function FeatureComponents() {
         <ComponentRelations componentId="room-chat-modal" />
         <div className={styles.showcaseBlock}>
           <Component>
-            <RoomChatModalServer roomId="1" myUserId="user1" />
+            <RoomChatModal
+              participantCount={roomsMock.rooms[0]?.current_participants || 0}
+              chats={[]}
+            />
           </Component>
         </div>
       </section>
