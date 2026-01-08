@@ -1,21 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import IS from '@/utils/is';
 
 export default function MSWProvider({ children }: { children: React.ReactNode }) {
-  const [mswReady, setMswReady] = useState(false);
-
   useEffect(() => {
+    if (IS.nil(window) || process.env.NODE_ENV !== 'development') return;
     (async () => {
-      if (!IS.nil(window) && process.env.NODE_ENV === 'development') {
-        const { worker } = await import('@/mocks/browser');
-        await worker.start({ onUnhandledRequest: 'bypass' });
-        setMswReady(true);
-      } else setMswReady(true);
+      const { worker } = await import('@/mocks/browser');
+      await worker.start({ onUnhandledRequest: 'bypass' });
     })();
   }, []);
 
-  if (!mswReady) return null;
   return <>{children}</>;
 }
