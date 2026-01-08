@@ -27,6 +27,10 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_ROOT" || exit 1
 
 # 2️⃣ infra/.env 로드
+# GitHub Actions에서 전달된 환경변수를 먼저 백업
+SAVED_API_PORT="$API_PORT"
+SAVED_DOCKER_IMAGE_TAG="$DOCKER_IMAGE_TAG"
+
 ENV_FILE="$SCRIPT_DIR/.env"
 
 if [ -f "$ENV_FILE" ]; then
@@ -123,7 +127,7 @@ health_check() {
     if [ "$api_status" = "up" ] && [ "$nginx_status" = "up" ]; then
       # 컨테이너 내부에서 헬스체크 (호스트 포트 개방 없이 확인)
       if docker compose -f "$SCRIPT_DIR/docker-compose.yml" exec -T api \
-        wget --quiet --tries=1 --spider "http://localhost:${API_PORT:-3000}/health" >/dev/null 2>&1; then
+        wget --quiet --tries=1 --spider "http://localhost:${API_PORT:-4000}/health" >/dev/null 2>&1; then
         log "✓ 헬스체크 통과"
         return 0
       fi
@@ -148,6 +152,8 @@ if ! docker compose -f "$SCRIPT_DIR/docker-compose.yml" up -d; then
   log "상세 오류 확인 중..."
   docker compose -f "$SCRIPT_DIR/docker-compose.yml" config
   docker compose -f "$SCRIPT_DIR/docker-compose.yml" ps -a
+  log "서버 컨테이너 로그:"
+  docker logs server --tail 50 2>&1 || true
   # 롤백 시도
   if [ "$PREVIOUS_TAG" != "latest" ] && [ "$PREVIOUS_TAG" != "$DOCKER_IMAGE_TAG" ]; then
     log_warn "이전 버전으로 롤백 시도..."
@@ -162,6 +168,10 @@ fi
 # 9️⃣ 헬스체크 수행
 if ! health_check; then
   log_error "헬스체크 실패"
+  log "서버 컨테이너 로그 (최근 50줄):"
+  docker logs server --tail 50 2>&1 || true
+  log "서버 컨테이너 상태:"
+  docker compose -f "$SCRIPT_DIR/docker-compose.yml" ps api || true
   # 롤백 시도
   if [ "$PREVIOUS_TAG" != "latest" ] && [ "$PREVIOUS_TAG" != "$DOCKER_IMAGE_TAG" ]; then
     log_warn "이전 버전으로 롤백 시도..."
