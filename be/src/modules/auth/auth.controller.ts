@@ -31,8 +31,10 @@ export class AuthController {
       userId: dto.userId,
       user: {
         id: user.id,
-        name: user.name,
         email: user.email,
+        nickname: user.nickname,
+        profile_image: user.profile_image,
+        role: user.role,
       },
     };
   }
@@ -47,8 +49,10 @@ export class AuthController {
     return {
       users: users.map((user) => ({
         id: user.id,
-        name: user.name,
         email: user.email,
+        nickname: user.nickname,
+        profile_image: user.profile_image,
+        role: user.role,
       })),
     };
   }

@@ -2,18 +2,64 @@ import { Injectable } from '@nestjs/common';
 
 export interface MockUser {
   id: string;
-  name: string;
-  email?: string;
+  email: string;
+  nickname: string;
+  profile_image: string | null;
+  role: 'USER' | 'ADMIN';
+  is_blacklisted: boolean;
+  warning_count: number;
+  create_date: Date;
+  update_date: Date | null;
 }
 
 @Injectable()
 export class MockAuthService {
   // 개발용 Mock 사용자 목록
   private readonly mockUsers: MockUser[] = [
-    { id: 'user_1', name: 'Alice', email: 'alice@example.com' },
-    { id: 'user_2', name: 'Bob', email: 'bob@example.com' },
-    { id: 'user_3', name: 'Charlie', email: 'charlie@example.com' },
-    { id: 'test_user', name: 'Test User', email: 'test@example.com' },
+    {
+      id: 'user_1',
+      email: 'alice@example.com',
+      nickname: '앨리스',
+      profile_image: 'https://cdn.example.com/u1.png',
+      role: 'USER',
+      is_blacklisted: false,
+      warning_count: 0,
+      create_date: new Date('2024-01-01'),
+      update_date: null,
+    },
+    {
+      id: 'user_2',
+      email: 'bob@example.com',
+      nickname: '밥',
+      profile_image: 'https://cdn.example.com/u2.png',
+      role: 'USER',
+      is_blacklisted: false,
+      warning_count: 0,
+      create_date: new Date('2024-01-02'),
+      update_date: null,
+    },
+    {
+      id: 'user_3',
+      email: 'charlie@example.com',
+      nickname: '찰리',
+      profile_image: null,
+      role: 'USER',
+      is_blacklisted: false,
+      warning_count: 0,
+      create_date: new Date('2024-01-03'),
+      update_date: null,
+    },
+    {
+      id: 'test_user',
+      email: 'test@example.com',
+      nickname: '테스트',
+      profile_image: 'https://cdn.example.com/test.png',
+      role: 'ADMIN',
+      is_blacklisted: false,
+      warning_count: 0,
+      create_date: new Date('2024-01-04'),
+      update_date: null,
+    },
   ];
 
   /**

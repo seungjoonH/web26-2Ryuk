@@ -74,7 +74,24 @@ export class RedisIoAdapter extends IoAdapter {
   } {
     // TODO: query.userId 방식 제거 (개발 편의용)
     const queryUserId = socket.handshake.query.userId as string;
-    const token = socket.handshake.auth?.token as string;
+
+    // 토큰을 여러 소스에서 확인
+    // 1. Socket.io auth 객체 (연결 시 auth 옵션)
+    const authToken = socket.handshake.auth?.token as string;
+
+    // 2. HTTP 헤더 (Postman 등에서 헤더로 보낼 경우)
+    const headerAuth = socket.handshake.headers.authorization as string;
+    const headerAuthentication = socket.handshake.headers.authentication as string;
+
+    // 헤더에서 Bearer 토큰 형식 제거 (Bearer token 또는 직접 token)
+    const getTokenFromHeader = (header: string | undefined): string | null => {
+      if (!header) return null;
+      // "Bearer token" 형식이면 "Bearer " 제거
+      return header.startsWith('Bearer ') ? header.substring(7) : header;
+    };
+
+    // 토큰 우선순위: auth.token > Authorization 헤더 > Authentication 헤더
+    const token = authToken || getTokenFromHeader(headerAuth) || getTokenFromHeader(headerAuthentication);
 
     // TODO: Mock 토큰 검증을 JWT 토큰 검증으로 교체
     if (token && !queryUserId) {
