@@ -8,6 +8,10 @@
   cursor: text;
 }
 
+.textField.disabled {
+  cursor: not-allowed;
+}
+
 .textField .input {
   flex: 1;
   min-width: 0;

@@ -8,3 +8,7 @@ export interface PopularPostsSectionProps {
   posts: PostListItemData[];
   viewCount?: number;
 }
+
+export interface PopularPostsSectionServerProps {
+  viewCount?: number;
+}

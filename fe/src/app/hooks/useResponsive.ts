@@ -36,8 +36,6 @@ const useResponsive = () => {
   });
 
   useEffect(() => {
-    if (IS.undefined(window)) return;
-
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
