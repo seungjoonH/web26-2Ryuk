@@ -80,8 +80,8 @@ export default function TagSelector({
     // # 제거하고 태그 이름 추출
     let tagName = tagInput.replace(/^#+/, '').trim();
 
-    // 공백이 있으면 - 로 연결
-    if (tagName.includes(' ')) tagName = tagName.replace(/\s+/g, '-');
+    // 공백이 있으면 _ 로 연결
+    if (tagName.includes(' ')) tagName = tagName.replace(/\s+/g, '_');
 
     // 빈 태그 무시
     if (!tagName) {
