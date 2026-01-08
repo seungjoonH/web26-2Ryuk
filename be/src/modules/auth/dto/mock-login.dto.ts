@@ -8,6 +8,8 @@ export class MockLoginDto {
 
 export class MockUserResponseDto {
   id: string;
-  name: string;
-  email?: string;
+  email: string;
+  nickname: string;
+  profile_image: string | null;
+  role: 'USER' | 'ADMIN';
 }
