@@ -9,7 +9,6 @@ export interface RoomGridProps {
 export interface RealtimeRoomsSectionProps {
   rooms: RoomData[];
   onSearch?: (query: string) => void;
-  onCreateRoom?: () => void;
 }
 
 export interface PasswordSettingProps {

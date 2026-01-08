@@ -20,7 +20,7 @@ export default function Header() {
         <div className={styles.right}>
           <OutlineIconButton name="settings" size="small" />
           <div className={styles.separator} />
-          <Profile nickname={nickname} src={avatar} />
+          <Profile nickname={nickname} profileImage={avatar} />
         </div>
       </div>
     </header>
