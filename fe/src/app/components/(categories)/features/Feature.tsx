@@ -33,12 +33,14 @@ export default function FeatureComponents() {
               <Component>
                 <ChatBubble
                   id="1"
-                  authorId="1"
-                  authorNickname="상대방"
-                  isMe={false}
+                  sender={{
+                    role: 'user',
+                    nickname: '상대방',
+                    profileImage: 'https://i.pravatar.cc/150?img=1',
+                    isMe: false,
+                  }}
                   message="Their Message"
-                  createDate={new Date()}
-                  updateDate={new Date()}
+                  timestamp={new Date()}
                 />
               </Component>
             </div>
@@ -49,12 +51,14 @@ export default function FeatureComponents() {
               <Component>
                 <ChatBubble
                   id="2"
-                  authorId="2"
-                  authorNickname="나"
-                  isMe={true}
+                  sender={{
+                    role: 'user',
+                    nickname: '나',
+                    profileImage: 'https://i.pravatar.cc/150?img=2',
+                    isMe: true,
+                  }}
                   message="My Message"
-                  createDate={new Date()}
-                  updateDate={new Date()}
+                  timestamp={new Date()}
                 />
               </Component>
             </div>
@@ -67,7 +71,7 @@ export default function FeatureComponents() {
         <ComponentRelations componentId="chat-bubbles" />
         <div className={styles.showcaseBlock}>
           <Component>
-            <ChatBubbles chats={globalChatMock.chats.map(ChatConverter.toData)} />
+            <ChatBubbles chats={globalChatMock.chats.map(ChatConverter.toReceiveData)} />
           </Component>
         </div>
       </section>
