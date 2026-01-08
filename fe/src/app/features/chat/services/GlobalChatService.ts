@@ -34,7 +34,10 @@ export class GlobalChatService implements ChatChannel {
    * WebSocket 연결 및 글로벌 채팅 구독
    */
   subscribe(): void {
-    const wsUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    // 프로덕션 환경에서는 상대 경로 사용 (같은 도메인)
+    let wsUrl: string;
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') wsUrl = '';
+    else wsUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
     // 이미 구독 중이면 재연결 (인증 토큰 업데이트를 위해)
     if (this.isSubscribed) this.unsubscribe();
