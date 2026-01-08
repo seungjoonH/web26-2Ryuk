@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { LOG, logMessage } from '@src/common/utils/log-messages';
+import { GlobalChatMessageResponseDto } from './dto/chat-response.dto';
 
 @Injectable()
 export class ChatService {
@@ -8,24 +9,65 @@ export class ChatService {
 
   /**
    * 글로벌 채팅 메시지 브로드캐스트
+   * @param server Socket.io 서버 인스턴스
+   * @param roomId 방 ID
+   * @param userId 사용자 ID
+   * @param message 메시지 내용
+   * @param senderInfo 발신자 정보 (role, nickname, profile_image)
+   * @param senderSocketId 메시지를 보낸 클라이언트의 socket ID
    */
-  async broadcastGlobalChat(server: Server, userId: string, message: string): Promise<void> {
-    const data = {
-      room: 'global',
-      userId,
-      message,
-      timestamp: new Date().toISOString(),
+  async broadcastGlobalChat(
+    server: Server,
+    roomId: string,
+    userId: string,
+    message: string,
+    senderInfo: { role: string; nickname: string; profile_image: string | null },
+    senderSocketId: string,
+  ): Promise<void> {
+    const timestamp = new Date().toISOString();
+
+    // 메시지를 보낸 사용자에게는 is_me: true로 전송
+    const responseToSender: GlobalChatMessageResponseDto = {
+      event: 'chat:global:new-message',
+      data: {
+        message,
+        sender: {
+          role: senderInfo.role,
+          nickname: senderInfo.nickname,
+          profile_image: senderInfo.profile_image,
+          is_me: true,
+        },
+        timestamp,
+      },
     };
 
-    // 글로벌 채팅은 모든 연결된 클라이언트에게 전송
-    server.emit('chat:global:new-message', data);
+    // 다른 사용자들에게는 is_me: false로 전송
+    const responseToOthers: GlobalChatMessageResponseDto = {
+      event: 'chat:global:new-message',
+      data: {
+        message,
+        sender: {
+          role: senderInfo.role,
+          nickname: senderInfo.nickname,
+          profile_image: senderInfo.profile_image,
+          is_me: false,
+        },
+        timestamp,
+      },
+    };
+
+    // 메시지를 보낸 클라이언트에게만 is_me: true로 전송
+    server.to(senderSocketId).emit(responseToSender.event, responseToSender.data);
+    this.logger.debug(`메시지 발신자에게 전송: socketId=${senderSocketId}, is_me=true`);
+
+    // 같은 방의 다른 클라이언트들에게는 is_me: false로 전송
+    server.to(roomId).except(senderSocketId).emit(responseToOthers.event, responseToOthers.data);
+    this.logger.debug(`다른 클라이언트들에게 브로드캐스트: roomId=${roomId}, except=${senderSocketId}, is_me=false`);
 
     logMessage(this.logger, LOG.CHAT.GLOBAL_BROADCAST(userId, message));
   }
 
-  /**
-   * 방 채팅 메시지 브로드캐스트
-   */
+  // 방 채팅 메시지 브로드캐스트
   async broadcastRoomChat(server: Server, roomId: string, userId: string, message: string): Promise<void> {
     const data = {
       roomId,
@@ -40,9 +82,7 @@ export class ChatService {
     logMessage(this.logger, LOG.CHAT.ROOM_BROADCAST(roomId, userId, message));
   }
 
-  /**
-   * 사용자 방 참여 알림 (다른 참여자에게)
-   */
+  // 사용자 방 참여 알림 (다른 참여자에게)
   async notifyUserJoined(server: Server, roomId: string, userId: string): Promise<void> {
     const data = { roomId, userId };
 
@@ -50,9 +90,7 @@ export class ChatService {
     logMessage(this.logger, LOG.CHAT.USER_JOINED(roomId, userId));
   }
 
-  /**
-   * 사용자 방 퇴장 알림 (다른 참여자에게)
-   */
+  // 사용자 방 퇴장 알림 (다른 참여자에게)
   async notifyUserLeft(server: Server, roomId: string, userId: string): Promise<void> {
     const data = { roomId, userId };
 
