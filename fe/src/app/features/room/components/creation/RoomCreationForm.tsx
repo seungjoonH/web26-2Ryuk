@@ -7,9 +7,9 @@ import ParticipantStepper from '@/app/components/shared/stepper/ParticipantStepp
 import TagSelector from '@/app/components/shared/tag/TagSelector';
 import MicSetting from './MicSetting';
 import PasswordSetting from './PasswordSetting';
-import { RoomCreationData } from '../../dtos/type';
+import { RoomCreationData } from '@/app/features/room/dtos/type';
 import styles from './roomCreationForm.module.css';
-import { RoomCreationFormProps } from '../type';
+import { RoomCreationFormProps } from '@/app/features/room/components/type';
 
 export default function RoomCreationForm({
   initialData = {},
@@ -18,7 +18,7 @@ export default function RoomCreationForm({
 }: RoomCreationFormProps) {
   const [title, setTitle] = useState(initialData.title || '');
   const [tags, setTags] = useState<string[]>(initialData.tags || []);
-  const [maxCount, setMaxCount] = useState(initialData.maxCount || 4);
+  const [maxParticipants, setMaxParticipants] = useState(initialData.maxParticipants || 4);
   const [micEnabled, setMicEnabled] = useState(initialData.micEnabled ?? true);
   const [isPrivate, setIsPrivate] = useState(initialData.isPrivate ?? false);
   const [password, setPassword] = useState(initialData.password || '');
@@ -28,7 +28,7 @@ export default function RoomCreationForm({
     const data: RoomCreationData = {
       title: title.trim(),
       tags: tags,
-      maxCount: maxCount,
+      maxParticipants: maxParticipants,
       micEnabled: micEnabled,
       isPrivate: isPrivate,
       password: isPrivate ? password : undefined,
@@ -60,7 +60,7 @@ export default function RoomCreationForm({
         <div className={styles.row}>
           <div className={styles.halfSection}>
             <label className={styles.label}>최대 인원 수 (Max 10)</label>
-            <ParticipantStepper initialValue={maxCount} onChange={setMaxCount} />
+            <ParticipantStepper initialValue={maxParticipants} onChange={setMaxParticipants} />
           </div>
           <div className={styles.halfSection}>
             <label className={styles.label}>대화방 설정</label>

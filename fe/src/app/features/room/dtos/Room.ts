@@ -11,29 +11,38 @@ export class RoomConverter {
   static toData(dto: RoomDto): RoomData {
     return {
       id: dto.id,
+      hostId: dto.host_id,
       title: dto.title,
       tags: dto.tags,
-      currentCount: dto.currentCount,
-      maxCount: dto.maxCount,
+      currentParticipants: dto.current_participants,
+      maxParticipants: dto.max_participants,
+      isMicAvailable: dto.is_mic_available,
+      isPrivate: dto.is_private,
       participants: dto.participants.map((p) => ({
         id: p.id,
-        avatar: p.avatar,
+        nickname: p.nickname,
+        profile_image: p.profile_image,
       })),
+      createDate: new Date(dto.create_date),
     };
   }
 
   static toDto(data: RoomData): RoomDto {
     return {
       id: data.id,
+      host_id: data.hostId,
       title: data.title,
       tags: data.tags,
-      currentCount: data.currentCount,
-      maxCount: data.maxCount,
+      current_participants: data.currentParticipants,
+      max_participants: data.maxParticipants,
+      is_mic_available: data.isMicAvailable,
+      is_private: data.isPrivate,
       participants: data.participants.map((p) => ({
         id: p.id,
-        nickname: '', // TODO: nickname은 별도로 관리
-        avatar: p.avatar,
+        nickname: p.nickname,
+        profile_image: p.profile_image,
       })),
+      create_date: data.createDate.toISOString(),
     };
   }
 
@@ -41,9 +50,9 @@ export class RoomConverter {
     return {
       title: data.title,
       tags: data.tags,
-      maxCount: data.maxCount,
-      micEnabled: data.micEnabled,
-      isPrivate: data.isPrivate,
+      max_participants: data.maxParticipants,
+      mic_enabled: data.micEnabled,
+      is_private: data.isPrivate,
       password: data.password,
     };
   }
@@ -52,9 +61,9 @@ export class RoomConverter {
     return {
       title: dto.title,
       tags: dto.tags,
-      maxCount: dto.maxCount,
-      micEnabled: dto.micEnabled,
-      isPrivate: dto.isPrivate,
+      maxParticipants: dto.max_participants,
+      micEnabled: dto.mic_enabled,
+      isPrivate: dto.is_private,
       password: dto.password,
     };
   }
