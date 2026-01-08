@@ -12,20 +12,16 @@ export default function useNavigation() {
     goHome: () => {
       router.push(ROUTES.HOME);
     },
-
     goBack: () => {
       if (!IS.undefined(window) && window.history.length > 1) router.back();
       else router.push(ROUTES.HOME);
     },
-
     gotoComponents: (category: ComponentCategory) => {
       router.push(getCategoryPath(category));
     },
-
     goToPost: (id: string | number) => {
       router.push(ROUTES.post(id));
     },
-
     goToRoom: (id: string | number) => {
       router.push(ROUTES.room(id));
     },

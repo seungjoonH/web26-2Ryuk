@@ -1,32 +1,35 @@
 {
-  "onlineCount": 1165,
+  "current_participants": 1165,
   "chats": [
     {
-      "id": "1",
       "message": "안녕하세요! 오늘 날씨 좋네요 ㅎㅎ",
-      "createDate": "2024-01-15T14:30:00",
-      "updateDate": "2024-01-15T14:30:00",
-      "authorId": "1",
-      "authorNickname": "박지원",
-      "isMe": false
+      "sender": {
+        "role": "user",
+        "nickname": "박지원",
+        "profile_image": null,
+        "is_me": false
+      },
+      "timestamp": "2024-01-15T14:30:00.000Z"
     },
     {
-      "id": "2",
       "message": "네! 물방울톡 하기 딱 좋은 날씨예요 :)",
-      "createDate": "2024-01-15T14:31:00",
-      "updateDate": "2024-01-15T14:31:00",
-      "authorId": "2",
-      "authorNickname": "강하늘",
-      "isMe": true
+      "sender": {
+        "role": "user",
+        "nickname": "강하늘",
+        "profile_image": null,
+        "is_me": true
+      },
+      "timestamp": "2024-01-15T14:31:00.000Z"
     },
     {
-      "id": "3",
       "message": "같이 노래방 하실 분 계신가요?",
-      "createDate": "2024-01-15T14:32:00",
-      "updateDate": "2024-01-15T14:32:00",
-      "authorId": "3",
-      "authorNickname": "김민수",
-      "isMe": false
+      "sender": {
+        "role": "user",
+        "nickname": "김민수",
+        "profile_image": null,
+        "is_me": false
+      },
+      "timestamp": "2024-01-15T14:32:00.000Z"
     }
   ]
 }

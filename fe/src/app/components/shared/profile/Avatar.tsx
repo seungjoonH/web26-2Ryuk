@@ -8,15 +8,15 @@ import CSSUtil from '@/utils/css';
 
 const DEFAULT_AVATAR = Paths.images('default_profile');
 
-function Avatar({ nickname, src, isActive, onClick }: AvatarProps) {
+function Avatar({ profileImage, isActive, onClick }: AvatarProps) {
   const className = CSSUtil.buildCls(styles.avatar, isActive && styles.active);
-  const imageSrc = src || DEFAULT_AVATAR;
+  const src = profileImage || DEFAULT_AVATAR;
 
   return (
     <div className={className} onClick={onClick}>
       <Image
-        src={imageSrc}
-        alt={`avatar-${nickname}`}
+        src={src}
+        alt="avatar"
         width={32}
         height={32}
         onError={(e) => {

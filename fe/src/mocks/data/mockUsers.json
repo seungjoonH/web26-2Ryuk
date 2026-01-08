@@ -1,0 +1,31 @@
+[
+  {
+    "id": "user_1",
+    "email": "alice@example.com",
+    "nickname": "앨리스",
+    "profile_image": "https://i.pravatar.cc/150?img=1",
+    "role": "USER"
+  },
+  {
+    "id": "user_2",
+    "email": "bob@example.com",
+    "nickname": "밥",
+    "profile_image": "https://i.pravatar.cc/150?img=2",
+    "role": "USER"
+  },
+  {
+    "id": "user_3",
+    "email": "charlie@example.com",
+    "nickname": "찰리",
+    "profile_image": null,
+    "role": "USER"
+  },
+  {
+    "id": "test_user",
+    "email": "test@example.com",
+    "nickname": "테스트",
+    "profile_image": "https://i.pravatar.cc/150?img=3",
+    "role": "ADMIN"
+  }
+]
+

@@ -1,46 +1,47 @@
-export interface ParticipantDto {
-  id: string;
-  nickname: string;
-  avatar: string;
-}
-
 export interface RoomDto {
   id: string;
   title: string;
   tags: string[];
-  currentCount: number;
-  maxCount: number;
-  participants: ParticipantDto[];
+  current_participants: number;
+  max_participants: number;
+  is_mic_available: boolean;
+  is_private: boolean;
+  participant_profile_images: string[];
+  create_date: string;
 }
 
 export interface ParticipantData {
   id: string;
-  avatar: string;
+  nickname: string;
+  profile_image: string;
 }
 
 export interface RoomData {
   id: string;
   title: string;
   tags: string[];
-  currentCount: number;
-  maxCount: number;
-  participants: ParticipantData[];
+  currentParticipants: number;
+  maxParticipants: number;
+  isMicAvailable: boolean;
+  isPrivate: boolean;
+  participantProfileImages: string[];
+  createDate: Date;
 }
 
 export interface RoomCreationDto {
   title: string;
   tags: string[];
-  maxCount: number;
-  micEnabled: boolean;
-  isPrivate: boolean;
+  max_participants: number;
+  is_mic_available: boolean;
+  is_private: boolean;
   password?: string;
 }
 
 export interface RoomCreationData {
   title: string;
   tags: string[];
-  maxCount: number;
-  micEnabled: boolean;
+  maxParticipants: number;
+  isMicAvailable: boolean;
   isPrivate: boolean;
   password?: string;
 }

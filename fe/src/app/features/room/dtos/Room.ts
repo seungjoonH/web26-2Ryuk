@@ -1,60 +1,48 @@
-import {
-  RoomDto,
-  RoomData,
-  ParticipantDto,
-  ParticipantData,
-  RoomCreationDto,
-  RoomCreationData,
-} from './type';
-
+import { RoomDto, RoomData, RoomCreationDto, RoomCreationData } from './type';
 export class RoomConverter {
   static toData(dto: RoomDto): RoomData {
     return {
       id: dto.id,
       title: dto.title,
       tags: dto.tags,
-      currentCount: dto.currentCount,
-      maxCount: dto.maxCount,
-      participants: dto.participants.map((p) => ({
-        id: p.id,
-        avatar: p.avatar,
-      })),
+      currentParticipants: dto.current_participants,
+      maxParticipants: dto.max_participants,
+      isMicAvailable: dto.is_mic_available,
+      isPrivate: dto.is_private,
+      participantProfileImages: dto.participant_profile_images,
+      createDate: new Date(dto.create_date),
     };
   }
-
   static toDto(data: RoomData): RoomDto {
     return {
       id: data.id,
       title: data.title,
       tags: data.tags,
-      currentCount: data.currentCount,
-      maxCount: data.maxCount,
-      participants: data.participants.map((p) => ({
-        id: p.id,
-        nickname: '', // TODO: nickname은 별도로 관리
-        avatar: p.avatar,
-      })),
+      current_participants: data.currentParticipants,
+      max_participants: data.maxParticipants,
+      is_mic_available: data.isMicAvailable,
+      is_private: data.isPrivate,
+      participant_profile_images: data.participantProfileImages,
+      create_date: data.createDate.toISOString(),
     };
   }
-
   static creationToDto(data: RoomCreationData): RoomCreationDto {
     return {
       title: data.title,
       tags: data.tags,
-      maxCount: data.maxCount,
-      micEnabled: data.micEnabled,
-      isPrivate: data.isPrivate,
+      max_participants: data.maxParticipants,
+      is_mic_available: data.isMicAvailable,
+      is_private: data.isPrivate,
       password: data.password,
     };
   }
-
   static creationToData(dto: RoomCreationDto): RoomCreationData {
     return {
       title: dto.title,
       tags: dto.tags,
-      maxCount: dto.maxCount,
-      micEnabled: dto.micEnabled,
-      isPrivate: dto.isPrivate,
+      maxParticipants: dto.max_participants,
+      isMicAvailable: dto.is_mic_available,
+      isPrivate: dto.is_private,
       password: dto.password,
     };
   }

@@ -7,32 +7,20 @@ import CSSUtil from '@/utils/css';
 import DateUtil from '@/utils/date';
 import Rules from '@/app/shared/rule';
 
-function ChatBubble({
-  id,
-  authorId,
-  authorNickname,
-  message,
-  createDate,
-  updateDate,
-  isMe,
-}: ChatBubbleProps) {
-  const className = CSSUtil.buildCls(styles.chatBubble, isMe && styles.isMe);
-  const isEdited = updateDate && updateDate.getTime() !== createDate.getTime();
-  const time = DateUtil.format(createDate, { format: Rules.DATETIME_FORMAT.TIME });
-  const displayAuthor = isMe ? '나' : authorNickname;
+function ChatBubble({ id, message, sender, timestamp }: ChatBubbleProps) {
+  const className = CSSUtil.buildCls(styles.chatBubble, sender.isMe && styles.isMe);
+  const time = DateUtil.format(timestamp, { format: Rules.DATETIME_FORMAT.TIME });
+  const displayAuthor = sender.isMe ? `나(${sender.nickname})` : sender.nickname;
 
   return (
-    <div className={className} data-chat-id={id} data-author-id={authorId}>
+    <div className={className} data-chat-id={id}>
       <div className={styles.avatar}>
-        <Avatar nickname={authorNickname} src="" />
+        <Avatar profileImage={sender.profileImage || ''} />
       </div>
       <div className={styles.content}>
         <div className={styles.header}>
           <span className={styles.author}>{displayAuthor}</span>
-          <span className={styles.time}>
-            {time}
-            {isEdited && <span className={styles.edited}> (수정됨)</span>}
-          </span>
+          <span className={styles.time}>{time}</span>
         </div>
         <div className={styles.messageBubble}>
           <div className={styles.message}>{message}</div>

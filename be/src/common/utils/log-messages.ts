@@ -35,6 +35,66 @@ export const LOG = {
       message: `인증되지 않은 사용자 연결: socketId=${socketId}`,
       level: 'log',
     }),
+    SOCKET_IO_JOIN_AUTH: (userId: string, roomId: string): LogMessage => ({
+      message: `인증된 사용자 ${userId}가 글로벌 방 ${roomId}에 Socket.io 참여 완료`,
+      level: 'log',
+    }),
+    SOCKET_IO_JOIN_UNAUTH: (socketId: string, roomId: string): LogMessage => ({
+      message: `익명 사용자 ${socketId}가 글로벌 방 ${roomId}에 Socket.io 참여 완료`,
+      level: 'log',
+    }),
+    REDIS_JOIN: (userId: string, roomId: string): LogMessage => ({
+      message: `인증된 사용자 ${userId}가 글로벌 방 ${roomId}에 Redis 참여 완료`,
+      level: 'log',
+    }),
+    ROOM_JOIN_DTO_RECEIVED: (dto: string, type: string): LogMessage => ({
+      message: `room:join 받은 DTO: ${dto}, 타입: ${type}`,
+      level: 'debug',
+    }),
+    SOCKET_IO_JOIN_ERROR: (error: string): LogMessage => ({
+      message: `Socket.io room 참여 실패: ${error}`,
+      level: 'error',
+    }),
+    REDIS_JOIN_ERROR: (error: string): LogMessage => ({
+      message: `방 참여 실패: ${error}`,
+      level: 'error',
+    }),
+    ROOM_PARTICIPATION_CHECK_ERROR: (error: string): LogMessage => ({
+      message: `방 참여 확인 실패: ${error}`,
+      level: 'error',
+    }),
+    CONNECTION_HANDLE_ERROR: (error: string, stack?: string): LogMessage => ({
+      message: `연결 처리 중 예상치 못한 에러: ${error}${stack ? `\n${stack}` : ''}`,
+      level: 'error',
+    }),
+    GLOBAL_ROOM_LEAVE_ERROR: (error: string): LogMessage => ({
+      message: `글로벌 방 퇴장 처리 실패: ${error}`,
+      level: 'error',
+    }),
+    GLOBAL_CHAT_HANDLE_ERROR: (error: string): LogMessage => ({
+      message: `글로벌 채팅 처리 중 에러 발생: ${error}`,
+      level: 'error',
+    }),
+    ROOM_CHAT_HANDLE_ERROR: (error: string): LogMessage => ({
+      message: `방 채팅 처리 중 에러 발생: ${error}`,
+      level: 'error',
+    }),
+    ROOM_JOIN_HANDLE_ERROR: (error: string, stack?: string): LogMessage => ({
+      message: `방 입장 처리 중 에러 발생: ${error}${stack ? `\n${stack}` : ''}`,
+      level: 'error',
+    }),
+    ROOM_LEAVE_HANDLE_ERROR: (error: string, stack?: string): LogMessage => ({
+      message: `방 퇴장 처리 중 에러 발생: ${error}${stack ? `\n${stack}` : ''}`,
+      level: 'error',
+    }),
+    LOGOUT: (userId: string): LogMessage => ({
+      message: `사용자 로그아웃: userId=${userId} (WebSocket 연결 유지, 참여자 수에서 제외)`,
+      level: 'log',
+    }),
+    LOGOUT_ERROR: (error: string): LogMessage => ({
+      message: `로그아웃 처리 중 에러 발생: ${error}`,
+      level: 'error',
+    }),
   },
 
   // 채팅 관련
@@ -66,6 +126,10 @@ export const LOG = {
     NOT_MEMBER_SEND: (userId: string, roomId: string): LogMessage => ({
       message: `방 참여자가 아닌 사용자의 메시지 송신 시도: userId=${userId}, roomId=${roomId}`,
       level: 'warn',
+    }),
+    PARTICIPANTS_UPDATED: (roomId: string, currentParticipants: number): LogMessage => ({
+      message: `글로벌 채팅 참여자 수 업데이트: roomId=${roomId}, 참여자 수: ${currentParticipants}`,
+      level: 'log',
     }),
   },
 
@@ -114,6 +178,38 @@ export const LOG = {
     PERMISSION_CHECK: (userId: string, roomId: string): LogMessage => ({
       message: `권한 검증: userId=${userId}, roomId=${roomId}`,
       level: 'debug',
+    }),
+    INITIALIZED: {
+      message: `RoomService가 Redis 클라이언트와 함께 초기화되었습니다.`,
+      level: 'log',
+    },
+    ERROR_INITIALIZING_GLOBAL_ROOM: (error: string): LogMessage => ({
+      message: `글로벌 방 초기화 중 오류 발생: ${error}`,
+      level: 'error',
+    }),
+    GLOBAL_ROOM_INITIALIZED: (roomId: string): LogMessage => ({
+      message: `글로벌 방 초기화 완료: ${roomId}`,
+      level: 'log',
+    }),
+    ROOM_TYPE_FETCH_ERROR: (roomId: string, error: string): LogMessage => ({
+      message: `방 타입 조회 실패 (roomId: ${roomId}): ${error}`,
+      level: 'error',
+    }),
+    ROOM_CREATED: (roomId: string, type: string): LogMessage => ({
+      message: `방 생성 완료: roomId=${roomId}, type=${type}`,
+      level: 'log',
+    }),
+    PARTICIPANTS_INCREASE_ERROR: (roomId: string, error: string): LogMessage => ({
+      message: `참여자 수 증가 실패 (roomId: ${roomId}): ${error}`,
+      level: 'error',
+    }),
+    PARTICIPANTS_DECREASE_ERROR: (roomId: string, error: string): LogMessage => ({
+      message: `참여자 수 감소 실패 (roomId: ${roomId}): ${error}`,
+      level: 'error',
+    }),
+    PARTICIPANTS_FETCH_ERROR: (roomId: string, error: string): LogMessage => ({
+      message: `참여자 수 조회 실패 (roomId: ${roomId}): ${error}`,
+      level: 'error',
     }),
   },
 } as const;

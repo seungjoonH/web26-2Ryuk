@@ -5,22 +5,53 @@
  */
 import { http, HttpResponse } from 'msw';
 import roomsMock from './data/rooms.json';
-import globalChatMock from './data/globalChat.json';
 import postListCardMock from './data/postListCard.json';
-import postListTableMock from './data/postListTable.json';
 import profilesMock from './data/profiles.json';
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 export const handlers = [
-  // Rooms API
-  http.get(`${baseUrl}/api/rooms`, () => {
-    return HttpResponse.json(roomsMock);
+  // Rooms API (전체 방 목록 조회)
+  http.get(`${baseUrl}/api/rooms/all`, () => {
+    // 빈 배열인 경우 204 응답
+    if (!roomsMock.rooms || roomsMock.rooms.length === 0) {
+      return HttpResponse.json(
+        {
+          success: true,
+          message: '방 목록 조회에 성공 했습니다.',
+          data: {
+            rooms: [],
+          },
+        },
+        { status: 204 },
+      );
+    }
+
+    // 정상 응답
+    return HttpResponse.json({
+      success: true,
+      message: '방 목록 조회에 성공 했습니다.',
+      data: {
+        rooms: roomsMock.rooms,
+      },
+    });
   }),
 
-  // Global Chat API
-  http.get(`${baseUrl}/api/chat/global`, () => {
-    return HttpResponse.json(globalChatMock);
+  // Room API (단일 방 조회)
+  http.get(`${baseUrl}/api/rooms/:roomId`, ({ params }) => {
+    const { roomId } = params;
+    const room = roomsMock.rooms.find((r) => r.id === roomId);
+    if (!room) {
+      return HttpResponse.json(
+        { success: false, message: '존재하지 않는 방입니다.' },
+        { status: 404 },
+      );
+    }
+    return HttpResponse.json({
+      success: true,
+      message: '방 상세 조회에 성공 했습니다.',
+      data: room,
+    });
   }),
 
   // Popular Posts API
@@ -40,25 +71,12 @@ export const handlers = [
     return HttpResponse.json(postListCardMock);
   }),
 
-  // Posts Table API
-  http.get(`${baseUrl}/api/posts`, () => {
-    return HttpResponse.json(postListTableMock);
-  }),
-
-  // User Profile API
+  // User Profile API (특정 사용자 정보)
   http.get(`${baseUrl}/api/users/:userId/profile`, ({ params }) => {
     const { userId } = params;
     const profile = profilesMock.find((p) => p.id === userId);
 
-    if (!profile) {
-      return HttpResponse.json({ error: 'Profile not found' }, { status: 404 });
-    }
-
+    if (!profile) return HttpResponse.json({ error: 'Profile not found' }, { status: 404 });
     return HttpResponse.json(profile);
-  }),
-
-  // Profiles API (전체 프로필 목록)
-  http.get(`${baseUrl}/api/profiles`, () => {
-    return HttpResponse.json(profilesMock);
   }),
 ];
