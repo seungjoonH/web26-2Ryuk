@@ -1,7 +1,7 @@
-import { ChatData } from '@/app/features/chat/dtos/type';
+import { ChatReceiveData } from '@/app/features/chat/dtos/type';
 
 export interface ChatBubblesProps {
-  chats: ChatData[];
+  chats: ChatReceiveData[];
 }
 
 export interface ChatModalHeaderProps {
@@ -18,11 +18,12 @@ export interface ChatModalBaseProps {
   iconName: string;
   title: string;
   participantCount: number;
-  chats: ChatData[];
+  chats: ChatReceiveData[];
   onMessageSubmit?: (message: string) => void;
   headerChildren?: React.ReactNode;
   participantsAvatars?: React.ReactNode;
   isConnected?: boolean;
+  disabled?: boolean;
 }
 
 export interface GlobalChatHeaderProps {
@@ -32,7 +33,7 @@ export interface GlobalChatHeaderProps {
 }
 
 export interface GlobalChatProps {
-  chats: ChatData[];
+  chats: ChatReceiveData[];
   onlineCount: number;
   onMessageSubmit?: (message: string) => void;
   isConnected?: boolean;
@@ -40,7 +41,7 @@ export interface GlobalChatProps {
 
 export interface RoomChatModalProps {
   participantCount: number;
-  chats: ChatData[];
+  chats: ChatReceiveData[];
   onMessageSubmit?: (message: string) => void;
   onMicToggle?: () => void;
   onSpeakerToggle?: () => void;
