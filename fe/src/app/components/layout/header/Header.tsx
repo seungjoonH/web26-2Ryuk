@@ -1,15 +1,20 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import styles from './header.module.css';
 import { Logo } from '@/app/components/sprite/logo/Logo';
 import { OutlineIconButton } from '@/app/components/shared/icon/IconButton';
 import Profile from '@/app/components/shared/profile/Profile';
-import useNavigation from '@/app/hooks/useNavigation';
+import LoginButton from '@/app/components/shared/button/LoginButton';
+import { authStore, type AuthStore } from '@/app/features/user/stores/auth';
+import { ROUTES } from '@/app/shared/routes';
+import LogoutButton from '@/app/components/shared/button/LogoutButton';
 
 export default function Header() {
-  const { goHome } = useNavigation();
-  const nickname = '강하늘';
-  const avatar = 'https://i.pravatar.cc/150?img=1';
+  const router = useRouter();
+  const user = authStore((state: AuthStore) => state.user);
+
+  const goHome = () => router.push(ROUTES.HOME);
 
   return (
     <header className={styles.header}>
@@ -19,8 +24,9 @@ export default function Header() {
         </div>
         <div className={styles.right}>
           <OutlineIconButton name="settings" size="small" />
+          {user ? <LogoutButton /> : <LoginButton />}
           <div className={styles.separator} />
-          <Profile nickname={nickname} profileImage={avatar} />
+          {user && <Profile nickname={user.nickname} profileImage={user.avatar} />}
         </div>
       </div>
     </header>
