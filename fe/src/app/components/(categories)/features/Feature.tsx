@@ -1,6 +1,7 @@
 import styles from '@/app/components/helpers/components.module.css';
 import { ChatBubbles, ChatConverter } from '@/app/features/chat';
 import ChatBubble from '@/app/features/chat/components/ChatBubble';
+import ChatModalBase from '@/app/features/chat/components/ChatModalBase';
 import PopularPosts from '@/app/features/post/components/PopularPosts';
 import PostListRow from '@/app/features/post/components/PostListRow';
 import PostListItem from '@/app/features/post/components/PostListItem';
@@ -10,12 +11,14 @@ import globalChatMock from '@/mocks/data/globalChat.json';
 import postListCardMock from '@/mocks/data/postListCard.json';
 import { PostConverter } from '@/app/features/post/dtos/Post';
 import GlobalChatModal from '@/app/features/chat/components/GlobalChat.server';
+import RoomChatModalServer from '@/app/features/chat/components/RoomChatModal.server';
 import MicSetting from '@/app/features/room/components/creation/MicSetting';
 import PasswordSetting from '@/app/features/room/components/creation/PasswordSetting';
 import RoomCreationModal from '@/app/features/room/components/creation/RoomCreationModal';
 import RealtimeRoomsSection from '@/app/features/room/components/RealtimeRoomsSection';
 import RoomCard from '@/app/features/room/components/card/RoomCard';
 import roomsMock from '@/mocks/data/rooms.json';
+import { RoomConverter } from '@/app/features/room/dtos/Room';
 
 export default function FeatureComponents() {
   return (
@@ -69,12 +72,32 @@ export default function FeatureComponents() {
         </div>
       </section>
 
+      <section id="chat-modal-base" className={styles.section}>
+        <h2 className={styles.sectionTitle}>ChatModalBase</h2>
+        <ComponentRelations componentId="chat-modal-base" />
+        <div className={styles.showcaseBlock}>
+          <Component>
+            <ChatModalBase iconName="photo" title="Title" participantCount={0} chats={[]} />
+          </Component>
+        </div>
+      </section>
+
       <section id="global-chat-modal" className={styles.section}>
         <h2 className={styles.sectionTitle}>GlobalChatModal</h2>
         <ComponentRelations componentId="global-chat-modal" />
         <div className={styles.showcaseBlock}>
           <Component>
             <GlobalChatModal />
+          </Component>
+        </div>
+      </section>
+
+      <section id="room-chat-modal" className={styles.section}>
+        <h2 className={styles.sectionTitle}>RoomChatModal</h2>
+        <ComponentRelations componentId="room-chat-modal" />
+        <div className={styles.showcaseBlock}>
+          <Component>
+            <RoomChatModalServer roomId="1" myUserId="user1" />
           </Component>
         </div>
       </section>
@@ -214,13 +237,16 @@ export default function FeatureComponents() {
                   id="1"
                   title="Title"
                   tags={['#tag1', '#tag2']}
-                  currentCount={5}
-                  maxCount={10}
-                  participants={[
-                    { id: 'user1', avatar: 'https://i.pravatar.cc/150?img=1' },
-                    { id: 'user2', avatar: 'https://i.pravatar.cc/150?img=2' },
-                    { id: 'user3', avatar: 'https://i.pravatar.cc/150?img=3' },
-                    { id: 'user4', avatar: 'https://i.pravatar.cc/150?img=4' },
+                  currentParticipants={5}
+                  maxParticipants={10}
+                  isMicAvailable
+                  isPrivate={false}
+                  createDate={new Date()}
+                  participantProfileImages={[
+                    'https://i.pravatar.cc/150?img=1',
+                    'https://i.pravatar.cc/150?img=2',
+                    'https://i.pravatar.cc/150?img=3',
+                    'https://i.pravatar.cc/150?img=4',
                   ]}
                 />
               </Component>
@@ -234,7 +260,7 @@ export default function FeatureComponents() {
         <ComponentRelations componentId="realtime-rooms" />
         <div className={styles.showcaseBlock}>
           <Component fullWidth>
-            <RealtimeRoomsSection rooms={roomsMock.rooms} />
+            <RealtimeRoomsSection rooms={roomsMock.rooms.map(RoomConverter.toData)} />
           </Component>
         </div>
       </section>

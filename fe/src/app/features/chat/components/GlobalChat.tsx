@@ -1,60 +1,58 @@
 'use client';
 
-import { useState } from 'react';
-import ChatBubbles from './ChatBubbles';
-import styles from './chat.module.css';
-import MessageForm from '@/app/components/shared/form/message/MessageForm';
-import { GlobalChatHeaderProps, GlobalChatProps } from './type';
-import * as IconCircle from '@/app/components/shared/icon/IconCircle';
-import { GhostIconButton } from '@/app/components/shared/icon/IconButton';
-import CSSUtil from '@/utils/css';
+import { useEffect, useState, useCallback } from 'react';
+import { globalChatService } from '../services/GlobalChatService';
+import { ChatData } from '../dtos/type';
+import ChatModalBase from './ChatModalBase';
+import { GlobalChatProps } from './type';
 
-function GlobalChatHeader({ onlineCount, isCollapsed, onToggle }: GlobalChatHeaderProps) {
-  const iconName = isCollapsed ? 'up' : 'down';
+/**
+ * GlobalChat 클라이언트 컴포넌트
+ * WebSocket 연결 및 메시지 관리 담당
+ */
+export default function GlobalChat({ chats: initialChats, onlineCount = 0 }: GlobalChatProps) {
+  const [chats, setChats] = useState<ChatData[]>(initialChats || []);
+  const [isConnected, setIsConnected] = useState(false);
+
+  // WebSocket 연결 및 구독
+  useEffect(() => {
+    // GlobalChatService를 통해 WebSocket 연결 및 구독
+    globalChatService.subscribe();
+
+    // 메시지 수신 콜백 등록
+    const unsubscribeMessage = globalChatService.onMessage((message) =>
+      setChats((prev) => [...prev, message]),
+    );
+
+    // 연결 상태 변경 콜백 등록
+    const unsubscribeConnection = globalChatService.onConnectionChange((connected) =>
+      setIsConnected(connected),
+    );
+
+    // 초기 연결 상태 설정
+    setIsConnected(globalChatService.isConnected());
+
+    // 정리 함수
+    return () => {
+      unsubscribeMessage();
+      unsubscribeConnection();
+      globalChatService.unsubscribe();
+    };
+  }, []);
+
+  // 메시지 전송 핸들러
+  const handleMessageSubmit = useCallback((message: string) => {
+    globalChatService.sendMessage(message);
+  }, []);
 
   return (
-    <div className={styles.header}>
-      <IconCircle.Primary name="globe" size="medium" />
-      <div className={styles.headerContent}>
-        <div className={styles.title}>전체 채팅</div>
-        <div className={styles.status}>
-          <span className={styles.onlineDot} />
-          <span>{onlineCount.toLocaleString()}명 접속중</span>
-        </div>
-      </div>
-      <GhostIconButton name={iconName} size="medium" onClick={onToggle} />
-    </div>
-  );
-}
-
-export default function GlobalChat({ chats, onlineCount = 0, onMessageSubmit }: GlobalChatProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const handleToggle = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
-  const handleMessageSubmit = (message: string) => {
-    onMessageSubmit?.(message);
-
-    // TODO: 로그 수집 및 비속어 필터링
-  };
-
-  const className = CSSUtil.buildCls(styles.globalChat, isCollapsed && styles.collapsed);
-
-  return (
-    <div className={className}>
-      <GlobalChatHeader
-        onlineCount={onlineCount}
-        isCollapsed={isCollapsed}
-        onToggle={handleToggle}
-      />
-      <div className={styles.content}>
-        <ChatBubbles chats={chats} />
-        <div className={styles.messageForm}>
-          <MessageForm placeholder="메시지를 입력하세요..." onSubmit={handleMessageSubmit} />
-        </div>
-      </div>
-    </div>
+    <ChatModalBase
+      iconName="globe"
+      title="전체 채팅"
+      participantCount={onlineCount}
+      chats={chats}
+      onMessageSubmit={handleMessageSubmit}
+      isConnected={isConnected}
+    />
   );
 }

@@ -2,6 +2,9 @@
 export { default as GlobalChat } from './components/GlobalChat';
 export { default as GlobalChatModal } from './components/GlobalChat.server';
 export { default as RoomChats } from './components/RoomChats.server';
+export { default as ChatModalBase } from './components/ChatModalBase';
+export { default as RoomChatModal } from './components/RoomChatModal';
+export { default as RoomChatModalServer } from './components/RoomChatModal.server';
 export { default as ChatBubbles } from './components/ChatBubbles';
 export { default as ChatBubble } from './components/ChatBubble';
 export { ChatConverter, GlobalChatConverter } from './dtos/Chat';
