@@ -23,3 +23,10 @@
 .mobile .topSection {
   flex-direction: column;
 }
+
+.globalChatContainer {
+  position: fixed;
+  bottom: 48px;
+  right: 48px;
+  z-index: 1000;
+}

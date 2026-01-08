@@ -22,6 +22,7 @@ export class RoomConverter {
       max_participants: data.maxParticipants,
       is_mic_available: data.isMicAvailable,
       is_private: data.isPrivate,
+      participant_profile_images: data.participantProfileImages,
       create_date: data.createDate.toISOString(),
     };
   }

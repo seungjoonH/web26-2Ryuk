@@ -1,3 +1,4 @@
+import IS from '@/utils/is';
 import { io, Socket } from 'socket.io-client';
 
 export class WebSocketService {
@@ -16,16 +17,16 @@ export class WebSocketService {
     onMessage?: (data: unknown) => void,
     onError?: (error: Error) => void,
   ): void {
-    if (this.socket?.connected) {
-      console.warn('WebSocket is already connected');
-      return;
-    }
+    // 이미 연결되어 있으면 재연결
+    if (this.socket?.connected) this.disconnect();
 
     const connectionOptions: any = {
       transports: ['websocket'],
       reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionAttempts: 5,
+      reconnectionDelay: 100, // 재연결 지연 시간을 100ms로 단축
+      reconnectionDelayMax: 1000, // 최대 재연결 지연 시간
+      reconnectionAttempts: 10, // 재연결 시도 횟수 증가
+      timeout: 5000, // 연결 타임아웃 5초
     };
 
     // Mock 인증: query.userId 또는 auth.token 사용
@@ -58,6 +59,13 @@ export class WebSocketService {
   }
 
   /**
+   * Socket 인스턴스 가져오기 (이벤트 핸들러 등록용)
+   */
+  static getSocket(): Socket | null {
+    return this.socket;
+  }
+
+  /**
    * WebSocket 연결 해제
    */
   static disconnect(): void {
@@ -87,18 +95,24 @@ export class WebSocketService {
   }
 
   /**
-   * Mock 토큰 가져오기 (로컬 스토리지에서)
+   * Mock 토큰 가져오기 (authStore에서)
    */
   private static getMockToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('mock_token');
+    if (IS.undefined(window)) return null;
+    try {
+      const { authStore } = require('@/app/features/user/stores/auth');
+      const token = authStore.getState().token;
+      return token || localStorage.getItem('mock_token');
+    } catch {
+      return localStorage.getItem('mock_token');
+    }
   }
 
   /**
    * Mock 토큰 저장
    */
   static setMockToken(token: string): void {
-    if (typeof window === 'undefined') return;
+    if (IS.undefined(window)) return;
     localStorage.setItem('mock_token', token);
   }
 
@@ -107,10 +121,22 @@ export class WebSocketService {
    */
   static on(event: string, callback: (...args: any[]) => void): void {
     if (!this.socket) {
-      console.error('WebSocket is not initialized');
+      // socket이 생성될 때까지 대기 후 등록
+      const checkAndRegister = () => {
+        if (!this.socket) {
+          setTimeout(checkAndRegister, 10);
+          return;
+        }
+
+        this.socket.on(event, callback);
+        if (event === 'connect' && this.socket.connected) callback();
+      };
+      checkAndRegister();
       return;
     }
+
     this.socket.on(event, callback);
+    if (event === 'connect' && this.socket.connected) callback();
   }
 
   /**

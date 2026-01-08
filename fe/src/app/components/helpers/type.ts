@@ -1,6 +1,6 @@
 /**
  * 컴포넌트 간 관계 정의
- * 각 컴포넌트의 하위(children)와 상위(parent) 컴포넌트를 정의합니다.
+ * 각 컴포넌트의 하위(children)와 상위(parent) 컴포넌트 정의
  */
 
 export type ComponentCategory = 'shared' | 'layout' | 'page' | 'feature' | 'sprite';
@@ -73,10 +73,22 @@ export const componentRelations: ComponentRelation[] = [
   { id: 'chat-bubble', title: 'ChatBubble', category: 'feature' },
   { id: 'chat-bubbles', title: 'ChatBubbles', category: 'feature', children: ['chat-bubble'] },
   {
+    id: 'chat-modal-base',
+    title: 'ChatModalBase',
+    category: 'feature',
+    children: ['chat-bubbles', 'message-form', 'iconcircle', 'icon-button'],
+  },
+  {
     id: 'global-chat-modal',
     title: 'GlobalChatModal',
     category: 'feature',
-    children: ['chat-bubbles', 'message-form', 'iconcircle', 'icon-button'],
+    children: ['chat-modal-base'],
+  },
+  {
+    id: 'room-chat-modal',
+    title: 'RoomChatModal',
+    category: 'feature',
+    children: ['chat-modal-base'],
   },
   { id: 'post-list-row', title: 'PostListRow', category: 'feature', children: ['chip', 'icon'] },
   { id: 'post-list-item', title: 'PostListItem', category: 'feature', children: ['chip', 'icon'] },
@@ -200,7 +212,9 @@ export const layoutSections = [
 export const featureSections = [
   { id: 'chat-bubble', title: 'ChatBubble' },
   { id: 'chat-bubbles', title: 'ChatBubbles' },
+  { id: 'chat-modal-base', title: 'ChatModalBase' },
   { id: 'global-chat-modal', title: 'GlobalChatModal' },
+  { id: 'room-chat-modal', title: 'RoomChatModal' },
   { id: 'post-list-row', title: 'PostListRow' },
   { id: 'post-list-item', title: 'PostListItem' },
   { id: 'post-list-items', title: 'PostListItems' },

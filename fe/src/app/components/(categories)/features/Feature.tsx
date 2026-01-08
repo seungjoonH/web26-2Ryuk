@@ -1,6 +1,7 @@
 import styles from '@/app/components/helpers/components.module.css';
-import { ChatBubbles, ChatConverter } from '@/app/features/chat';
+import { ChatBubbles, ChatConverter, GlobalChat } from '@/app/features/chat';
 import ChatBubble from '@/app/features/chat/components/ChatBubble';
+import ChatModalBase from '@/app/features/chat/components/ChatModalBase';
 import PopularPosts from '@/app/features/post/components/PopularPosts';
 import PostListRow from '@/app/features/post/components/PostListRow';
 import PostListItem from '@/app/features/post/components/PostListItem';
@@ -9,7 +10,7 @@ import ComponentRelations from '@/app/components/helpers/ComponentRelations';
 import globalChatMock from '@/mocks/data/globalChat.json';
 import postListCardMock from '@/mocks/data/postListCard.json';
 import { PostConverter } from '@/app/features/post/dtos/Post';
-import GlobalChatModal from '@/app/features/chat/components/GlobalChat.server';
+import RoomChatModal from '@/app/features/chat/components/RoomChatModal';
 import MicSetting from '@/app/features/room/components/creation/MicSetting';
 import PasswordSetting from '@/app/features/room/components/creation/PasswordSetting';
 import RoomCreationModal from '@/app/features/room/components/creation/RoomCreationModal';
@@ -17,6 +18,7 @@ import RealtimeRoomsSection from '@/app/features/room/components/RealtimeRoomsSe
 import RoomCard from '@/app/features/room/components/card/RoomCard';
 import roomsMock from '@/mocks/data/rooms.json';
 import { RoomConverter } from '@/app/features/room/dtos/Room';
+import GlobalChatModal from '@/app/features/chat/components/GlobalChatModal';
 
 export default function FeatureComponents() {
   return (
@@ -31,12 +33,14 @@ export default function FeatureComponents() {
               <Component>
                 <ChatBubble
                   id="1"
-                  authorId="1"
-                  authorNickname="상대방"
-                  isMe={false}
+                  sender={{
+                    role: 'user',
+                    nickname: '상대방',
+                    profileImage: 'https://i.pravatar.cc/150?img=1',
+                    isMe: false,
+                  }}
                   message="Their Message"
-                  createDate={new Date()}
-                  updateDate={new Date()}
+                  timestamp={new Date()}
                 />
               </Component>
             </div>
@@ -47,12 +51,14 @@ export default function FeatureComponents() {
               <Component>
                 <ChatBubble
                   id="2"
-                  authorId="2"
-                  authorNickname="나"
-                  isMe={true}
+                  sender={{
+                    role: 'user',
+                    nickname: '나',
+                    profileImage: 'https://i.pravatar.cc/150?img=2',
+                    isMe: true,
+                  }}
                   message="My Message"
-                  createDate={new Date()}
-                  updateDate={new Date()}
+                  timestamp={new Date()}
                 />
               </Component>
             </div>
@@ -65,7 +71,17 @@ export default function FeatureComponents() {
         <ComponentRelations componentId="chat-bubbles" />
         <div className={styles.showcaseBlock}>
           <Component>
-            <ChatBubbles chats={globalChatMock.chats.map(ChatConverter.toData)} />
+            <ChatBubbles chats={globalChatMock.chats.map(ChatConverter.toReceiveData)} />
+          </Component>
+        </div>
+      </section>
+
+      <section id="chat-modal-base" className={styles.section}>
+        <h2 className={styles.sectionTitle}>ChatModalBase</h2>
+        <ComponentRelations componentId="chat-modal-base" />
+        <div className={styles.showcaseBlock}>
+          <Component>
+            <ChatModalBase iconName="photo" title="Title" participantCount={0} chats={[]} />
           </Component>
         </div>
       </section>
@@ -76,6 +92,19 @@ export default function FeatureComponents() {
         <div className={styles.showcaseBlock}>
           <Component>
             <GlobalChatModal />
+          </Component>
+        </div>
+      </section>
+
+      <section id="room-chat-modal" className={styles.section}>
+        <h2 className={styles.sectionTitle}>RoomChatModal</h2>
+        <ComponentRelations componentId="room-chat-modal" />
+        <div className={styles.showcaseBlock}>
+          <Component>
+            <RoomChatModal
+              participantCount={roomsMock.rooms[0]?.current_participants || 0}
+              chats={[]}
+            />
           </Component>
         </div>
       </section>

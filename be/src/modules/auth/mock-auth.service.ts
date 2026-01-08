@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import mockUsersData from '../../mocks/users.js';
 
 export interface MockUser {
   id: string;
@@ -14,53 +15,17 @@ export interface MockUser {
 
 @Injectable()
 export class MockAuthService {
-  // 개발용 Mock 사용자 목록
-  private readonly mockUsers: MockUser[] = [
-    {
-      id: 'user_1',
-      email: 'alice@example.com',
-      nickname: '앨리스',
-      profile_image: 'https://cdn.example.com/u1.png',
-      role: 'USER',
-      is_blacklisted: false,
-      warning_count: 0,
-      create_date: new Date('2024-01-01'),
-      update_date: null,
-    },
-    {
-      id: 'user_2',
-      email: 'bob@example.com',
-      nickname: '밥',
-      profile_image: 'https://cdn.example.com/u2.png',
-      role: 'USER',
-      is_blacklisted: false,
-      warning_count: 0,
-      create_date: new Date('2024-01-02'),
-      update_date: null,
-    },
-    {
-      id: 'user_3',
-      email: 'charlie@example.com',
-      nickname: '찰리',
-      profile_image: null,
-      role: 'USER',
-      is_blacklisted: false,
-      warning_count: 0,
-      create_date: new Date('2024-01-03'),
-      update_date: null,
-    },
-    {
-      id: 'test_user',
-      email: 'test@example.com',
-      nickname: '테스트',
-      profile_image: 'https://cdn.example.com/test.png',
-      role: 'ADMIN',
-      is_blacklisted: false,
-      warning_count: 0,
-      create_date: new Date('2024-01-04'),
-      update_date: null,
-    },
-  ];
+  // 개발용 Mock 사용자 목록 (users.js에서 로드)
+  private readonly mockUsers: MockUser[];
+
+  constructor() {
+    // JSON 데이터를 MockUser 형식으로 변환 (Date 객체 변환)
+    this.mockUsers = mockUsersData.map((user: any) => ({
+      ...user,
+      create_date: new Date(user.create_date),
+      update_date: user.update_date ? new Date(user.update_date) : null,
+    }));
+  }
 
   /**
    * Mock JWT 토큰 생성 (실제 검증 없이)

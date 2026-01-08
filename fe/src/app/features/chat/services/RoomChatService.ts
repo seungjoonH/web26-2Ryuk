@@ -1,8 +1,8 @@
-import { ChatDto } from '@/app/features/chat/dtos/type';
+import { ChatReceiveData } from '@/app/features/chat/dtos/type';
 import { ChatChannel } from './type';
 
 export class RoomChatService implements ChatChannel {
-  async getChats(roomId: string): Promise<ChatDto[]> {
+  async getChats(roomId: string): Promise<ChatReceiveData[]> {
     // TODO: WebSocket을 통한 초기 메시지 로드
     return [];
   }

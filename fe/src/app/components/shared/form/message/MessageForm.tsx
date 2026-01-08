@@ -37,6 +37,7 @@ export default function MessageForm({
         <PrimaryTextfield
           placeholder={placeholder}
           initialValue={message}
+          value={message}
           onChange={setMessage}
           disabled={disabled}
         />

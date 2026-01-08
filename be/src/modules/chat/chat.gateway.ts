@@ -20,6 +20,7 @@ import { REDIS_CLIENT } from '@src/providers/redis/redis.provider';
 import { RedisClientType } from 'redis';
 import { LOG, logMessage } from '@src/common/utils/log-messages';
 import { GLOBAL_ROOM_ID } from '@src/common/constants/constants';
+import { ROOM_TYPE } from '@src/modules/room/room.type';
 
 @UseFilters(new WsExceptionFilter()) // 필터
 @WebSocketGateway({ namespace: '/' })
@@ -67,41 +68,44 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // GLOBAL 방의 roomId 조회 후 참여 (인증 여부와 관계없이 모든 사용자)
       // 우선 글로벌 방 하나만 있다고 가정...
       const globalRoomId = GLOBAL_ROOM_ID;
+      const isUser = isAuthenticated && userId;
 
       if (globalRoomId) {
-        // 인증된 사용자는 Redis에도 논리적 상태 저장
-        if (isAuthenticated && userId) {
+        // 모든 사용자 Socket.io room 참여 (브로드캐스트용) - 먼저 join
+        try {
+          await client.join(globalRoomId);
+          if (isUser) logMessage(this.logger, LOG.WS.SOCKET_IO_JOIN_AUTH(userId, globalRoomId));
+          else logMessage(this.logger, LOG.WS.SOCKET_IO_JOIN_UNAUTH(client.id, globalRoomId));
+        } catch (joinError) {
+          const errorMessage = joinError instanceof Error ? joinError.message : String(joinError);
+          logMessage(this.logger, LOG.WS.SOCKET_IO_JOIN_ERROR(errorMessage));
+        }
+
+        // 인증된 사용자는 Redis에도 논리적 상태 저장 및 참여자 수 업데이트
+        if (isUser) {
           try {
             const isInRoom = await this.roomService.isUserInRoom(userId, globalRoomId);
             if (!isInRoom) {
               try {
-                // Redis에 논리적 상태 저장 (방 멤버 목록에 추가, 사용자의 참여 방 목록에 추가)
                 await this.roomService.joinRoom(userId, globalRoomId);
-                // 글로벌 룸의 current_participants 증가
-                await this.roomService.increaseCurrentParticipants(globalRoomId);
-                this.logger.log(`인증된 사용자 ${userId}가 글로벌 방 ${globalRoomId}에 Redis 참여 완료`);
+                logMessage(this.logger, LOG.WS.REDIS_JOIN(userId, globalRoomId));
+
+                // 참여자 수 조회 및 브로드캐스트 (인증된 사용자만 카운트)
+                const currentParticipants = await this.roomService.getCurrentParticipants(globalRoomId);
+                await this.chatService.notifyParticipantsUpdated(this.server, globalRoomId, currentParticipants);
               } catch (joinError) {
                 const errorMessage = joinError instanceof Error ? joinError.message : String(joinError);
-                this.logger.error(`방 참여 실패: ${errorMessage}`);
+                logMessage(this.logger, LOG.WS.REDIS_JOIN_ERROR(errorMessage));
               }
+            } else {
+              // 이미 참여 중인 경우에도 현재 참여자 수 브로드캐스트
+              const currentParticipants = await this.roomService.getCurrentParticipants(globalRoomId);
+              await this.chatService.notifyParticipantsUpdated(this.server, globalRoomId, currentParticipants);
             }
           } catch (checkError) {
             const errorMessage = checkError instanceof Error ? checkError.message : String(checkError);
-            this.logger.error(`방 참여 확인 실패: ${errorMessage}`);
+            logMessage(this.logger, LOG.WS.ROOM_PARTICIPATION_CHECK_ERROR(errorMessage));
           }
-        }
-
-        // 모든 사용자 Socket.io room 참여 (브로드캐스트용)
-        try {
-          client.join(globalRoomId);
-          if (isAuthenticated && userId) {
-            this.logger.log(`인증된 사용자 ${userId}가 글로벌 방 ${globalRoomId}에 Socket.io 참여 완료`);
-          } else {
-            this.logger.log(`익명 사용자 ${client.id}가 글로벌 방 ${globalRoomId}에 Socket.io 참여 완료`);
-          }
-        } catch (joinError) {
-          const errorMessage = joinError instanceof Error ? joinError.message : String(joinError);
-          this.logger.error(`Socket.io room 참여 실패: ${errorMessage}`);
         }
       }
 
@@ -122,7 +126,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(`연결 처리 중 예상치 못한 에러: ${errorMessage}`, errorStack);
+      logMessage(this.logger, LOG.WS.CONNECTION_HANDLE_ERROR(errorMessage, errorStack));
     }
   }
 
@@ -133,8 +137,35 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     logMessage(this.logger, LOG.WS.DISCONNECT(client.id, userId));
 
-    // 모든 방에서 제거
-    if (userId) await this.roomService.leaveAllRooms(userId);
+    const globalRoomId = GLOBAL_ROOM_ID;
+
+    // 인증된 사용자가 글로벌 방에 참여 중인 경우 참여자 수 업데이트 및 브로드캐스트
+    if (isAuthenticated && userId && globalRoomId) {
+      try {
+        const isInRoom = await this.roomService.isUserInRoom(userId, globalRoomId);
+        if (isInRoom) {
+          // 글로벌 방에서 제거 (참여자 수 감소)
+          await this.roomService.leaveRoom(userId, globalRoomId);
+
+          // 참여자 수 조회 및 브로드캐스트 (인증된 사용자만 카운트)
+          const currentParticipants = await this.roomService.getCurrentParticipants(globalRoomId);
+          await this.chatService.notifyParticipantsUpdated(this.server, globalRoomId, currentParticipants);
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logMessage(this.logger, LOG.WS.GLOBAL_ROOM_LEAVE_ERROR(errorMessage));
+      }
+    }
+
+    // 모든 방에서 제거 (글로벌 방은 이미 처리됨)
+    if (userId) {
+      try {
+        await this.roomService.leaveAllRooms(userId);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logMessage(this.logger, LOG.WS.GLOBAL_ROOM_LEAVE_ERROR(errorMessage));
+      }
+    }
   }
 
   // 글로벌 채팅 메시지 수신 및 브로드캐스트 (인증되지 않은 사용자는 수신만)
@@ -195,7 +226,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       // 기타 에러 처리
       const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`글로벌 채팅 처리 중 에러 발생: ${errorMessage}`);
+      logMessage(this.logger, LOG.WS.GLOBAL_CHAT_HANDLE_ERROR(errorMessage));
       try {
         client.emit('error', { message: '메시지 전송 중 문제가 발생했습니다.' });
       } catch (emitError) {
@@ -217,6 +248,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const isAuthenticated = client.data.authenticated;
 
       // 권한 검증: 인증되지 않은 사용자는 메시지 송신 불가능
+      console.log('isAuthenticated', isAuthenticated);
       if (!isAuthenticated || !userId) {
         logMessage(this.logger, LOG.CHAT.UNAUTH_ROOM_SEND(client.id));
         client.emit('error', { message: '인증이 필요합니다.' });
@@ -254,7 +286,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       // 기타 에러 처리
       const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`방 채팅 처리 중 에러 발생: ${errorMessage}`);
+      logMessage(this.logger, LOG.WS.ROOM_CHAT_HANDLE_ERROR(errorMessage));
       try {
         client.emit('error', { message: '메시지 전송 중 문제가 발생했습니다.' });
       } catch (emitError) {
@@ -270,7 +302,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('room:join')
   async handleRoomJoin(@ConnectedSocket() client: Socket, @MessageBody() dto: RoomJoinDto) {
     // 디버깅: 받은 데이터 로그
-    this.logger.log(`room:join 받은 DTO: ${JSON.stringify(dto)}, 타입: ${typeof dto}`);
+    logMessage(this.logger, LOG.WS.ROOM_JOIN_DTO_RECEIVED(JSON.stringify(dto), typeof dto));
 
     // 조인하려는 방의 타입 확인 (Redis에서 읽어온 값)
     const roomType = await this.roomService.getRoomType(dto.roomId);
@@ -280,7 +312,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const isAuthenticated = client.data.authenticated;
 
       // 로컬 방일때만 권한 검증
-      if (roomType == 'LOCAL') {
+      if (roomType === ROOM_TYPE.LOCAL) {
         if (!isAuthenticated || !userId) {
           logMessage(this.logger, LOG.ROOM.UNAUTH_JOIN(client.id));
           client.emit('error', { message: '로그인이 필요합니다.' });
@@ -312,7 +344,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       // GLOBAL 타입 방이 아닌 경우, 다른 로컬 방에 참여 중인지 확인
-      if (roomType !== 'GLOBAL') {
+      if (roomType !== ROOM_TYPE.GLOBAL) {
         const existingLocalRoom = await this.roomService.getUserLocalRoom(userId);
         if (existingLocalRoom && existingLocalRoom !== dto.roomId) {
           // 기존 로컬 방에서 퇴장 처리
@@ -362,7 +394,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // Redis 연결 문제나 예상치 못한 에러 발생 시 처리
       const errorMessage = error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(`방 입장 처리 중 에러 발생: ${errorMessage}`, errorStack);
+      logMessage(this.logger, LOG.WS.ROOM_JOIN_HANDLE_ERROR(errorMessage, errorStack));
 
       try {
         client.emit('error', { message: '방 입장 처리 중 문제가 발생했습니다.' });
@@ -370,6 +402,40 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // emit 실패 시 무시
         this.logger.warn('에러 메시지 전송 실패', emitError);
       }
+    }
+  }
+
+  /**
+   * 로그아웃 처리
+   * 인증 사용자 -> 익명 사용자 전환
+   * WebSocket 연결은 유지하되, 참여자 수에서 제외
+   */
+  @SubscribeMessage('auth:logout')
+  async handleLogout(@ConnectedSocket() client: Socket) {
+    try {
+      const userId = client.data.userId;
+      const isAuthenticated = client.data.authenticated;
+
+      // 인증된 사용자가 아닌 경우 early return
+      if (!isAuthenticated || !userId) return;
+
+      const globalRoomId = GLOBAL_ROOM_ID;
+      if (!globalRoomId) return;
+
+      const isInRoom = await this.roomService.isUserInRoom(userId, globalRoomId);
+      if (!isInRoom) return;
+
+      // 글로벌 방에서 제거 (참여자 수 감소)
+      await this.roomService.leaveRoom(userId, globalRoomId);
+
+      // 참여자 수 조회 및 브로드캐스트
+      const currentParticipants = await this.roomService.getCurrentParticipants(globalRoomId);
+      await this.chatService.notifyParticipantsUpdated(this.server, globalRoomId, currentParticipants);
+
+      logMessage(this.logger, LOG.WS.LOGOUT(userId));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logMessage(this.logger, LOG.WS.LOGOUT_ERROR(errorMessage));
     }
   }
 
@@ -430,7 +496,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // 기타 에러 처리
       const errorMessage = error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(`방 퇴장 처리 중 에러 발생: ${errorMessage}`, errorStack);
+      logMessage(this.logger, LOG.WS.ROOM_LEAVE_HANDLE_ERROR(errorMessage, errorStack));
 
       try {
         client.emit('error', { message: '방 퇴장 처리 중 문제가 발생했습니다.' });

@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { LOG, logMessage } from '@src/common/utils/log-messages';
 import { GLOBAL_ROOM_ID } from '@src/common/constants/constants';
+import { ROOM_TYPE, RoomType } from './room.type';
 
 @Injectable()
 export class RoomService implements OnModuleInit {
@@ -28,13 +29,13 @@ export class RoomService implements OnModuleInit {
         // room:{roomId} Hash에 방 정보 저장 (다른 메서드들과 일관성 유지)
         await this.redisClient.hSet(roomKey, {
           title: '전체 채팅방',
-          type: 'GLOBAL',
+          type: ROOM_TYPE.GLOBAL,
           current_participants: '0',
           max_participants: '1000',
           create_date: new Date().toISOString(),
         });
 
-        this.logger.log(`글로벌 방 초기화 완료: ${roomId}`);
+        logMessage(this.logger, LOG.ROOM.GLOBAL_ROOM_INITIALIZED(roomId));
       }
     } catch (error) {
       logMessage(
@@ -45,12 +46,13 @@ export class RoomService implements OnModuleInit {
   }
 
   // 방 타입 조회
-  async getRoomType(roomId: string): Promise<'GLOBAL' | 'LOCAL' | null> {
+  async getRoomType(roomId: string): Promise<RoomType | null> {
     try {
       const type = await this.redisClient.hGet(`room:${roomId}`, 'type');
-      return type === 'GLOBAL' || type === 'LOCAL' ? (type as 'GLOBAL' | 'LOCAL') : null;
+      return type === ROOM_TYPE.GLOBAL || type === ROOM_TYPE.LOCAL ? (type as RoomType) : null;
     } catch (error) {
-      this.logger.error(`방 타입 조회 실패 (roomId: ${roomId}): ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logMessage(this.logger, LOG.ROOM.ROOM_TYPE_FETCH_ERROR(roomId, errorMessage));
       return null;
     }
   }
@@ -65,7 +67,7 @@ export class RoomService implements OnModuleInit {
     logMessage(this.logger, LOG.ROOM.PERMISSION_CHECK(userId, roomId));
 
     // 글로벌이면 무조건 true
-    if ((await this.getRoomType(roomId)) === 'GLOBAL') return true;
+    if ((await this.getRoomType(roomId)) === ROOM_TYPE.GLOBAL) return true;
 
     // 방이 존재하는지 확인 (필요시 Redis에서 확인)
     // 방 인원 수 제한 확인 (필요시)
@@ -80,22 +82,19 @@ export class RoomService implements OnModuleInit {
     await this.redisClient.hSet(`room:${roomId}:members`, userId, Date.now().toString());
     await this.redisClient.sAdd(`user:${userId}:rooms`, roomId);
 
+    // 참여자 수 증가
+    await this.increaseCurrentParticipants(roomId);
     logMessage(this.logger, LOG.ROOM.USER_JOINED(userId, roomId));
   }
 
-  // 사용자 방 제거 처리 + 참여자 수 감소
+  // 사용자 방 제거 처리
   async leaveRoom(userId: string, roomId: string): Promise<void> {
     // 방 멤버 목록에서 제거 (Hash), 사용자의 참여 방 목록에서 제거 (Set)
     await this.redisClient.hDel(`room:${roomId}:members`, userId);
     await this.redisClient.sRem(`user:${userId}:rooms`, roomId);
 
-    try {
-      await this.decreaseCurrentParticipants(roomId);
-    } catch (error) {
-      // 참여자 수 감소 실패는 로그만 남기고 계속 진행
-      this.logger.warn(`참여자 수 감소 실패 (roomId: ${roomId}): ${error.message}`);
-    }
-
+    // 참여자 수 감소
+    await this.decreaseCurrentParticipants(roomId);
     logMessage(this.logger, LOG.ROOM.USER_LEFT(userId, roomId));
   }
 
@@ -121,7 +120,7 @@ export class RoomService implements OnModuleInit {
     // 각 방의 type을 확인하여 LOCAL 타입인 방 찾기 (Redis에서 읽어온 값)
     for (const roomId of rooms) {
       const roomType = await this.getRoomType(roomId);
-      if (roomType === 'LOCAL') {
+      if (roomType === ROOM_TYPE.LOCAL) {
         return roomId;
       }
     }
@@ -131,17 +130,19 @@ export class RoomService implements OnModuleInit {
 
   // 사용자가 참여 중인 GLOBAL 타입 방 조회
   async getUserGlobalRoom(userId: string): Promise<string | null> {
-    const rooms = await this.getUserRooms(userId);
+    return GLOBAL_ROOM_ID;
 
-    // 각 방의 type을 확인하여 GLOBAL 타입인 방 찾기 (Redis에서 읽어온 값)
-    for (const roomId of rooms) {
-      const roomType = await this.getRoomType(roomId);
-      if (roomType === 'GLOBAL') {
-        return roomId;
-      }
-    }
+    // TODO: 추후 글로벌 방이 여러 개가 될 경우 구현 필요
 
-    return null;
+    // const rooms = await this.getUserRooms(userId);
+
+    // // 각 방의 type을 확인하여 GLOBAL 타입인 방 찾기 (Redis에서 읽어온 값)
+    // for (const roomId of rooms) {
+    //   const roomType = await this.getRoomType(roomId);
+    //   if (roomType === 'GLOBAL') return roomId;
+    // }
+
+    // return null;
   }
 
   // 방의 모든 멤버 목록 조회
@@ -172,7 +173,7 @@ export class RoomService implements OnModuleInit {
     id: string;
     title: string;
     hostId: string;
-    type: 'GLOBAL' | 'LOCAL';
+    type: RoomType;
     maxParticipants?: number;
     isPrivate?: boolean;
     password?: string;
@@ -191,7 +192,7 @@ export class RoomService implements OnModuleInit {
       create_date: new Date().toISOString(),
     });
 
-    this.logger.log(`방 생성 완료: roomId=${id}, type=${type}`);
+    logMessage(this.logger, LOG.ROOM.ROOM_CREATED(id, type));
   }
 
   // 방 존재 여부 확인
@@ -205,7 +206,8 @@ export class RoomService implements OnModuleInit {
     try {
       await this.redisClient.hIncrBy(`room:${roomId}`, 'current_participants', 1);
     } catch (error) {
-      this.logger.error(`참여자 수 증가 실패 (roomId: ${roomId}): ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logMessage(this.logger, LOG.ROOM.PARTICIPANTS_INCREASE_ERROR(roomId, errorMessage));
       throw error;
     }
   }
@@ -215,12 +217,23 @@ export class RoomService implements OnModuleInit {
     try {
       const current = await this.redisClient.hGet(`room:${roomId}`, 'current_participants');
       const count = parseInt(current || '0', 10);
-      if (count > 0) {
-        await this.redisClient.hIncrBy(`room:${roomId}`, 'current_participants', -1);
-      }
+      if (count > 0) await this.redisClient.hIncrBy(`room:${roomId}`, 'current_participants', -1);
     } catch (error) {
-      this.logger.error(`참여자 수 감소 실패 (roomId: ${roomId}): ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logMessage(this.logger, LOG.ROOM.PARTICIPANTS_DECREASE_ERROR(roomId, errorMessage));
       throw error;
+    }
+  }
+
+  // 방의 현재 참여자 수 조회
+  async getCurrentParticipants(roomId: string): Promise<number> {
+    try {
+      const current = await this.redisClient.hGet(`room:${roomId}`, 'current_participants');
+      return parseInt(current || '0', 10);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logMessage(this.logger, LOG.ROOM.PARTICIPANTS_FETCH_ERROR(roomId, errorMessage));
+      return 0;
     }
   }
 }

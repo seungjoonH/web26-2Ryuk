@@ -1,12 +1,33 @@
+.chatModal {
+  min-width: 440px;
+  max-height: 540px;
+  height: 540px;
+  display: flex;
+  flex-direction: column;
+  background: var(--neutral-1);
+  border-radius: 40px;
+  border: 2px solid var(--primary-3);
+  overflow: hidden;
+  box-shadow: 0 4px 8px #00000034;
+  transition: all .3s ease-in-out;
+}
+
+.chatModal.collapsed {
+  max-height: 100px;
+}
+
 .globalChat {
-  min-width: 480px;
-  max-height: 800px;
+  min-width: 440px;
+  max-height: 540px;
+  height: 540px;
+  display: flex;
+  flex-direction: column;
   background: var(--neutral-1);
   border-radius: 40px;
   border: 2px solid var(--primary-3);
   overflow: hidden;
   box-shadow: 0 2px 8px #0000001a;
-  transition: max-height 0.3s ease-in-out;
+  transition: all .3s ease-in-out;
 }
 
 .globalChat.collapsed {
@@ -18,7 +39,7 @@
   align-items: center;
   width: 100%;
   gap: 12px;
-  padding: 16px 20px;
+  padding: 20px;
   background: var(--primary-3);
 }
 
@@ -49,31 +70,54 @@
   flex-shrink: 0;
 }
 
+.onlineDot.disconnected {
+  background: var(--warning);
+}
+
+.connectionStatus {
+  color: var(--warning);
+  font-size: 0.875rem;
+}
+
 .content {
   display: flex;
   flex-direction: column;
-  max-height: 600px;
-  transition: all 0.3s ease-in-out;
+  flex: 1;
+  min-height: 0;
+  transition: all .3s ease-in-out;
   opacity: 1;
   transform: translateY(0);
+  max-height: 1000px;
   overflow: hidden;
 }
 
+.chatModal.collapsed .content,
 .globalChat.collapsed .content {
   max-height: 0;
   opacity: 0;
   transform: translateY(-10px);
+  transition: all .3s ease-in-out;
+}
+
+.chatModal.collapsed .participantsAvatars {
+  display: none;
+}
+
+.chattingArea {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .chatBubbles {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-  gap: 28px;
-  padding: 40px;
+  gap: 24px;
+  padding: 24px;
   background: var(--gradient-primary-2);
+  min-height: fit-content;
 }
 
 .messageForm {
@@ -81,4 +125,28 @@
   border-top: 1px solid var(--neutral-3);
   background: var(--neutral-1);
   flex-shrink: 0;
+}
+
+.roomChatHeaderControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.participantsAvatars {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--neutral-1);
+  border-top: 1px solid var(--neutral-3);
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.participantsAvatarsContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: fit-content;
 }
