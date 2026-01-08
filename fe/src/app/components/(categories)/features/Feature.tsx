@@ -16,6 +16,7 @@ import RoomCreationModal from '@/app/features/room/components/creation/RoomCreat
 import RealtimeRoomsSection from '@/app/features/room/components/RealtimeRoomsSection';
 import RoomCard from '@/app/features/room/components/card/RoomCard';
 import roomsMock from '@/mocks/data/rooms.json';
+import { RoomConverter } from '@/app/features/room/dtos/Room';
 
 export default function FeatureComponents() {
   return (
@@ -214,13 +215,16 @@ export default function FeatureComponents() {
                   id="1"
                   title="Title"
                   tags={['#tag1', '#tag2']}
-                  currentCount={5}
-                  maxCount={10}
-                  participants={[
-                    { id: 'user1', avatar: 'https://i.pravatar.cc/150?img=1' },
-                    { id: 'user2', avatar: 'https://i.pravatar.cc/150?img=2' },
-                    { id: 'user3', avatar: 'https://i.pravatar.cc/150?img=3' },
-                    { id: 'user4', avatar: 'https://i.pravatar.cc/150?img=4' },
+                  currentParticipants={5}
+                  maxParticipants={10}
+                  isMicAvailable
+                  isPrivate={false}
+                  createDate={new Date()}
+                  participantProfileImages={[
+                    'https://i.pravatar.cc/150?img=1',
+                    'https://i.pravatar.cc/150?img=2',
+                    'https://i.pravatar.cc/150?img=3',
+                    'https://i.pravatar.cc/150?img=4',
                   ]}
                 />
               </Component>
@@ -234,7 +238,7 @@ export default function FeatureComponents() {
         <ComponentRelations componentId="realtime-rooms" />
         <div className={styles.showcaseBlock}>
           <Component fullWidth>
-            <RealtimeRoomsSection rooms={roomsMock.rooms} />
+            <RealtimeRoomsSection rooms={roomsMock.rooms.map(RoomConverter.toData)} />
           </Component>
         </div>
       </section>

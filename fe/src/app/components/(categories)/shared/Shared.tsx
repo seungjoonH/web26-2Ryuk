@@ -1030,13 +1030,13 @@ export default function SharedComponents() {
           <div className={styles.iconRow}>
             <div className={styles.circleItem}>
               <Component>
-                <Avatar nickname="user1" src="" />
+                <Avatar profileImage="https://i.pravatar.cc/150?img=1" />
               </Component>
               <span className={styles.iconLabel}>Default</span>
             </div>
             <div className={styles.circleItem}>
               <Component>
-                <Avatar nickname="user2" src="" isActive />
+                <Avatar profileImage="https://i.pravatar.cc/150?img=2" isActive />
               </Component>
               <span className={styles.iconLabel}>Active</span>
             </div>
@@ -1056,7 +1056,7 @@ export default function SharedComponents() {
         <div className={styles.showcaseBlock}>
           <div className={styles.circleItem}>
             <Component>
-              <Avatars profileDataList={profilesMock} />
+              <Avatars profileImages={profilesMock.map((profile) => profile.avatar)} />
             </Component>
             <span className={styles.iconLabel}>Avatars</span>
           </div>
@@ -1076,7 +1076,7 @@ export default function SharedComponents() {
             </div>
             <div className={styles.circleItem}>
               <Component>
-                <Profile nickname="강하늘" src={profilesMock[0]?.avatar} />
+                <Profile nickname="강하늘" profileImage={profilesMock[0]?.avatar} />
               </Component>
               <span className={styles.iconLabel}>With Avatar</span>
             </div>

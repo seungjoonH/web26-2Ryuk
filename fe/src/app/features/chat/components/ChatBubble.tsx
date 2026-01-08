@@ -24,7 +24,7 @@ function ChatBubble({
   return (
     <div className={className} data-chat-id={id} data-author-id={authorId}>
       <div className={styles.avatar}>
-        <Avatar nickname={authorNickname} src="" />
+        <Avatar profileImage="" />
       </div>
       <div className={styles.content}>
         <div className={styles.header}>

@@ -5,19 +5,15 @@ import Avatar from './Avatar';
 import AvatarCount from './AvatarCount';
 import { AvatarsProps } from './type';
 
-function Avatars({ profileDataList, viewCount = 3 }: AvatarsProps) {
-  const length = profileDataList.length;
-  const visibleAvatars = profileDataList.slice(0, viewCount);
+function Avatars({ profileImages = [], viewCount = 3 }: AvatarsProps) {
+  const length = profileImages.length;
+  const visibleImages = profileImages.slice(0, viewCount);
   const rest = length - viewCount;
 
   return (
     <div className={styles.avatars}>
-      {visibleAvatars.map((profileData) => (
-        <Avatar
-          key={`avatar-${profileData.id}`}
-          nickname={`User ${profileData.id}`}
-          src={profileData.avatar}
-        />
+      {visibleImages.map((profileImage, index) => (
+        <Avatar key={`avatar-${index}`} profileImage={profileImage} />
       ))}
       {rest > 0 && <AvatarCount count={rest} />}
     </div>

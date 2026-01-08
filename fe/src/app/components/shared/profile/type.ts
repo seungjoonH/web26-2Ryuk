@@ -1,11 +1,10 @@
 export interface ProfileProps {
   nickname: string;
-  src?: string;
+  profileImage?: string;
 }
 
 export interface AvatarProps {
-  nickname: string;
-  src?: string;
+  profileImage?: string;
   isActive?: boolean;
   onClick?: () => void;
 }
@@ -16,6 +15,6 @@ export interface AvatarCountProps {
 }
 
 export interface AvatarsProps {
-  profileDataList: Array<{ id: string; avatar?: string; nickname?: string }>;
+  profileImages: string[];
   viewCount?: number;
 }

@@ -5,11 +5,18 @@ import { OutlineChip } from '@/app/components/shared/chip/Chip';
 import StatusChip from '@/app/components/shared/chip/StatusChip';
 import { SecondaryIconButton } from '@/app/components/shared/icon/IconButton';
 import Avatars from '@/app/components/shared/profile/Avatars';
-import { RoomCardProps } from '../type';
+import { RoomCardProps } from '@/app/features/room/components/type';
 import TextTooltip from '@/app/components/shared/tooltip/TextTooltip';
 
-function RoomCard({ id, title, tags, currentCount, maxCount, participants }: RoomCardProps) {
-  const remainingCount = maxCount - currentCount;
+function RoomCard({
+  id,
+  title,
+  tags,
+  currentParticipants,
+  maxParticipants,
+  participantProfileImages = [],
+}: RoomCardProps) {
+  const remainingCount = maxParticipants - currentParticipants;
 
   const getStatusChipStatus = (): 'success' | 'warning' | 'error' => {
     if (remainingCount === 0) return 'error'; // 풀방
@@ -29,7 +36,7 @@ function RoomCard({ id, title, tags, currentCount, maxCount, participants }: Roo
           <TextTooltip text={title} anchorId={anchorId} />
           <StatusChip
             status={getStatusChipStatus()}
-            label={`${currentCount}/${maxCount}`}
+            label={`${currentParticipants}/${maxParticipants}`}
             size="small"
           />
         </div>
@@ -42,7 +49,7 @@ function RoomCard({ id, title, tags, currentCount, maxCount, participants }: Roo
         )}
       </div>
       <div className={styles.roomCardFooter}>
-        <Avatars profileDataList={participants} />
+        <Avatars profileImages={participantProfileImages} />
         <SecondaryIconButton name="open" size="small" disabled={remainingCount === 0} />
       </div>
     </div>
