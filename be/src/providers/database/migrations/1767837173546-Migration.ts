@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Migration1767776642186 implements MigrationInterface {
-  name = 'Migration1767776642186';
+export class Migration1767837173546 implements MigrationInterface {
+  name = 'Migration1767837173546';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -17,7 +17,7 @@ export class Migration1767776642186 implements MigrationInterface {
       `CREATE TABLE \`post_picture\` (\`id\` binary(16) NOT NULL, \`post_id\` binary(16) NOT NULL, \`url\` varchar(2048) NOT NULL, \`size\` bigint NOT NULL, \`filename\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`post-like\` (\`post_id\` binary(16) NOT NULL, \`user_id\` binary(16) NOT NULL, PRIMARY KEY (\`post_id\`, \`user_id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`post_like\` (\`post_id\` binary(16) NOT NULL, \`user_id\` binary(16) NOT NULL, PRIMARY KEY (\`post_id\`, \`user_id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
       `CREATE TABLE \`chatting_log\` (\`id\` binary(16) NOT NULL, \`room_id\` binary(16) NULL, \`sender_id\` binary(16) NOT NULL, \`content\` text NOT NULL, \`create_date\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`room_type\` enum ('GLOBAL', 'LOCAL') NOT NULL, INDEX \`IDX_457b253f95425da0bf5339fbf9\` (\`room_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
@@ -44,10 +44,10 @@ export class Migration1767776642186 implements MigrationInterface {
       `ALTER TABLE \`post_picture\` ADD CONSTRAINT \`FK_cd9eace3863ff6e37373f665c71\` FOREIGN KEY (\`post_id\`) REFERENCES \`post\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE \`post-like\` ADD CONSTRAINT \`FK_b85e488a3b0052a465a262a5929\` FOREIGN KEY (\`post_id\`) REFERENCES \`post\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE \`post_like\` ADD CONSTRAINT \`FK_a7ec6ac3dc7a05a9648c418f1ad\` FOREIGN KEY (\`post_id\`) REFERENCES \`post\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE \`post-like\` ADD CONSTRAINT \`FK_db84e35b56b433590c6a3e9fcba\` FOREIGN KEY (\`user_id\`) REFERENCES \`user\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE \`post_like\` ADD CONSTRAINT \`FK_c635b15915984c8cdb520a1fef3\` FOREIGN KEY (\`user_id\`) REFERENCES \`user\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE \`game_record\` ADD CONSTRAINT \`FK_d730eaba4213c2718538bb003df\` FOREIGN KEY (\`user_id\`) REFERENCES \`user\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -68,8 +68,8 @@ export class Migration1767776642186 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE \`comment\` DROP FOREIGN KEY \`FK_8aa21186314ce53c5b61a0e8c93\``);
     await queryRunner.query(`ALTER TABLE \`game_record\` DROP FOREIGN KEY \`FK_033f917d9bcc2c69b14909bb0a2\``);
     await queryRunner.query(`ALTER TABLE \`game_record\` DROP FOREIGN KEY \`FK_d730eaba4213c2718538bb003df\``);
-    await queryRunner.query(`ALTER TABLE \`post-like\` DROP FOREIGN KEY \`FK_db84e35b56b433590c6a3e9fcba\``);
-    await queryRunner.query(`ALTER TABLE \`post-like\` DROP FOREIGN KEY \`FK_b85e488a3b0052a465a262a5929\``);
+    await queryRunner.query(`ALTER TABLE \`post_like\` DROP FOREIGN KEY \`FK_c635b15915984c8cdb520a1fef3\``);
+    await queryRunner.query(`ALTER TABLE \`post_like\` DROP FOREIGN KEY \`FK_a7ec6ac3dc7a05a9648c418f1ad\``);
     await queryRunner.query(`ALTER TABLE \`post_picture\` DROP FOREIGN KEY \`FK_cd9eace3863ff6e37373f665c71\``);
     await queryRunner.query(`ALTER TABLE \`post\` DROP FOREIGN KEY \`FK_2f1a9ca8908fc8168bc18437f62\``);
     await queryRunner.query(`ALTER TABLE \`chatting_report\` DROP FOREIGN KEY \`FK_5e913ed81347095711ee5eb382d\``);
@@ -79,7 +79,7 @@ export class Migration1767776642186 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE \`game\``);
     await queryRunner.query(`DROP INDEX \`IDX_457b253f95425da0bf5339fbf9\` ON \`chatting_log\``);
     await queryRunner.query(`DROP TABLE \`chatting_log\``);
-    await queryRunner.query(`DROP TABLE \`post-like\``);
+    await queryRunner.query(`DROP TABLE \`post_like\``);
     await queryRunner.query(`DROP TABLE \`post_picture\``);
     await queryRunner.query(`DROP TABLE \`post\``);
     await queryRunner.query(`DROP TABLE \`chatting_report\``);

@@ -2,25 +2,28 @@ services:
   api:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGE_BACKEND}:${DOCKER_IMAGE_TAG:-latest}
     container_name: server
-    environment:
-      NODE_ENV: production
-      PORT: ${API_PORT}
+    env_file:
+      - .env
     expose:
       - "${API_PORT}"
+    depends_on:
+      redis:
+        condition: service_started
+    networks:
+      - eryuk_net
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
     healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:${API_PORT}/health || exit 0"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
-        reservations:
-          cpus: '0.5'
-          memory: 256M
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - eryuk_net
     restart: unless-stopped
@@ -28,9 +31,11 @@ services:
   nginx:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGE_FRONTEND}:${DOCKER_IMAGE_TAG:-latest}
     container_name: nginx
+    env_file:
+      - .env
     depends_on:
       api:
-        condition: service_healthy
+        condition: service_started
     ports:
       - "${NGINX_HTTP_PORT}:${NGINX_HTTP_PORT}"
       - "${NGINX_HTTPS_PORT}:${NGINX_HTTPS_PORT}"
@@ -38,26 +43,14 @@ services:
       - ./nginx/certs/fullchain.crt:/etc/nginx/ssl/fullchain.crt:ro
       - ./nginx/certs/private.key:/etc/nginx/ssl/private.key:ro
       - ./nginx/certs/dhparam.pem:/etc/nginx/ssl/dhparam.pem:ro
-      # 템플릿 파일 위치
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
     environment:
-      API_HOST: ${API_HOST}
-      API_PORT: ${API_PORT}
-      NGINX_HTTP_PORT: ${NGINX_HTTP_PORT}
-      NGINX_HTTPS_PORT: ${NGINX_HTTPS_PORT}
-      NGINX_ENVSUBST_FILENAME: nginx.conf
-      NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx
-      NGINX_ENVSUBST_VAR_LIST: '$API_HOST $API_PORT $NGINX_HTTP_PORT $NGINX_HTTPS_PORT'
-    healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:${NGINX_HTTP_PORT}/health || exit 0"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+      API_HOST: api
     networks:
       - eryuk_net
     restart: unless-stopped
-
+volumes:
+  redis_data:
 networks:
   eryuk_net:
     driver: bridge

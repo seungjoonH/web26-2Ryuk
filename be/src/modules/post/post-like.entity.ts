@@ -3,7 +3,7 @@ import { PrimaryUuidColumn } from '@src/common/decorators/primary-uuid-column.de
 import { Post } from '@src/modules/post/post.entity';
 import { User } from '@src/modules/user/user.entity';
 
-@Entity('post-like')
+@Entity('post_like')
 export class PostLike {
   @PrimaryUuidColumn()
   post_id: string;
