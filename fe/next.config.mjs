@@ -1,11 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'export',
   images: { unoptimized: true },
   devIndicators: { position: 'bottom-right' },
 
   // 리버스 프록시 설정
-  // USE_REAL_API=true 일 때만 활성화 (MSW 사용 시 비활성화)
   async rewrites() {
     if (!process.env.USE_REAL_API) return [];
 

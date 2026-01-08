@@ -18,33 +18,46 @@ RUN pnpm install --frozen-lockfile --prod=false --ignore-scripts --filter fe...
 # Copy source code
 COPY fe ./fe
 
-# Build application (static export via output: 'export')
+# Build application
 ARG NEXT_PUBLIC_API_URL=http://localhost
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 WORKDIR /app/fe
 RUN pnpm build
 
-# Production stage with Nginx
-FROM nginx:alpine AS production
+# Production stage with Node.js (Next.js server)
+FROM node:22-alpine AS production
 
-# Install wget for healthcheck
-RUN apk add --no-cache wget
+# Install pnpm
+RUN npm install -g pnpm@9.12.0
+
+WORKDIR /app
+
+# Copy workspace manifests
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY fe/package.json ./fe/
+
+# Install production dependencies only for frontend workspace
+# --ignore-scripts: prepare 스크립트(husky) 실행 건너뛰기 (프로덕션 빌드에서는 불필요)
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts --filter fe...
+
+# Copy built application from builder
+COPY --from=base /app/fe/.next ./fe/.next
+COPY --from=base /app/fe/public ./fe/public
+COPY --from=base /app/fe/next.config.mjs ./fe/next.config.mjs
+COPY --from=base /app/fe/package.json ./fe/package.json
 
 # Set environment variables
 ARG NODE_ENV=production
 ARG VERSION=latest
+ARG NEXT_PUBLIC_API_URL=http://localhost
 ENV NODE_ENV=${NODE_ENV}
 ENV VERSION=${VERSION}
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
-# Copy exported static site
-COPY --from=base /app/fe/out/ /usr/share/nginx/html/
+# Expose port (Next.js default port is 3000)
+EXPOSE 3000
 
-# Copy nginx configuration (will be overridden by volume mount in docker-compose.yml)
-COPY infra/nginx/nginx.conf /etc/nginx/nginx.conf.template
-
-# Expose port (will be set by environment variable)
-EXPOSE 80
-
-# Default command (will be overridden by docker-compose.yml)
-CMD ["nginx", "-g", "daemon off;"]
+# Start Next.js server
+WORKDIR /app/fe
+CMD ["pnpm", "start"]
