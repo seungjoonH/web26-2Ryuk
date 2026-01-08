@@ -97,4 +97,13 @@ export class ChatService {
     server.to(roomId).emit('room:user-left', data);
     logMessage(this.logger, LOG.CHAT.USER_LEFT(roomId, userId));
   }
+
+  // 글로벌 채팅 참여자 수 업데이트 브로드캐스트
+  async notifyParticipantsUpdated(server: Server, roomId: string, currentParticipants: number): Promise<void> {
+    const data = { roomId, current_participants: currentParticipants };
+
+    // 글로벌 방의 경우 모든 클라이언트에게 브로드캐스트
+    server.emit('chat:global:participants-updated', data);
+    logMessage(this.logger, LOG.CHAT.PARTICIPANTS_UPDATED(roomId, currentParticipants));
+  }
 }

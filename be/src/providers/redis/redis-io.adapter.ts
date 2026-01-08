@@ -40,6 +40,9 @@ export class RedisIoAdapter extends IoAdapter {
         origin: frontendUrl,
         credentials: true,
       },
+      pingTimeout: 5000,
+      pingInterval: 25000,
+      allowEIO3: true,
     });
     server.adapter(this.adapterConstructor);
 
