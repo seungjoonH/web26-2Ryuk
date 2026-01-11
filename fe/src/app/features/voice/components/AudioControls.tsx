@@ -8,21 +8,21 @@ import { OutlineIconButton } from '@/app/components/shared/icon/IconButton';
 export default function AudioControlButtons({
   initialMicState = false,
   initialSpeakerState = false,
-  onMicToggle,
-  onSpeakerToggle,
+  onMicChange,
+  onSpeakerChange,
 }: AudioControlsProps) {
   const [micState, setMicState] = useState(initialMicState);
   const [speakerState, setSpeakerState] = useState(initialSpeakerState);
 
   const handleMicToggle = () => {
     setMicState((prev) => !prev);
-    onMicToggle?.();
+    onMicChange?.(micState);
   };
 
   const handleSpeakerToggle = () => {
     if (micState) setMicState(false);
     setSpeakerState((prev) => !prev);
-    onSpeakerToggle?.();
+    onSpeakerChange?.(speakerState);
   };
 
   const getMicThemeColor = () => {
