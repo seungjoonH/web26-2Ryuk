@@ -9,11 +9,13 @@ import {
   isDragHandleElement,
 } from './util';
 
+const DEFAULT_POSITION = { x: 2000, y: 2000 };
+
 export function useFloatingWidget({
-  initialPosition = { x: window.innerWidth, y: window.innerHeight },
+  initialPosition,
   dragHandleId,
 }: UseFloatingWidgetProps): UseFloatingWidgetReturn {
-  const [position, setPosition] = useState<Position>(initialPosition);
+  const [position, setPosition] = useState<Position>(initialPosition || DEFAULT_POSITION);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
   const [isTransitioning, setIsTransitioning] = useState(false);
