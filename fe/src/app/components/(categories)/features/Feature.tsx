@@ -1,5 +1,5 @@
 import styles from '@/app/components/helpers/components.module.css';
-import { ChatBubbles, ChatConverter, GlobalChat } from '@/app/features/chat';
+import { ChatBubbles, ChatConverter } from '@/app/features/chat';
 import ChatBubble from '@/app/features/chat/components/ChatBubble';
 import ChatModalBase from '@/app/features/chat/components/ChatModalBase';
 import PopularPosts from '@/app/features/post/components/PopularPosts';
@@ -19,6 +19,8 @@ import RoomCard from '@/app/features/room/components/card/RoomCard';
 import roomsMock from '@/mocks/data/rooms.json';
 import { RoomConverter } from '@/app/features/room/dtos/Room';
 import GlobalChatModal from '@/app/features/chat/components/GlobalChatModal';
+import Modal from '@/app/components/shared/modal/Modal';
+import { GhostTextButton } from '@/app/components/shared/button/TextButton';
 
 export default function FeatureComponents() {
   return (
@@ -227,7 +229,10 @@ export default function FeatureComponents() {
         <ComponentRelations componentId="room-creation-modal" />
         <div className={styles.showcaseBlock}>
           <Component>
-            <RoomCreationModalContent />
+            <GhostTextButton modalId="room-creation-demo" text="모달 열기" size="medium" />
+            <Modal id="room-creation-demo">
+              <RoomCreationModalContent />
+            </Modal>
           </Component>
         </div>
       </section>

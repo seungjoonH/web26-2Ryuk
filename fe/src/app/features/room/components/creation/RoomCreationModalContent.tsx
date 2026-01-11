@@ -1,21 +1,18 @@
 'use client';
 
 import RoomCreationForm from './RoomCreationForm';
-import { RoomCreationFormProps } from '../type';
+import { RoomCreationFormProps } from '@/app/features/room/components/type';
 import styles from './roomCreationForm.module.css';
 import Paths from '@/app/shared/path';
 import Image from 'next/image';
-import Modal, { useModal } from '@/app/components/shared/modal/Modal';
+import { useModal } from '@/app/components/shared/modal/useModal';
 
 export default function RoomCreationModalContent(props: RoomCreationFormProps) {
   const { onSubmit } = props;
   const { closeModal } = useModal();
 
   const handleCancel = () => closeModal('room-creation');
-
-  const handleSubmit = (data: Parameters<NonNullable<typeof onSubmit>>[0]) => {
-    onSubmit?.(data);
-  };
+  const handleSubmit = (data: Parameters<NonNullable<typeof onSubmit>>[0]) => onSubmit?.(data);
 
   return (
     <div className={styles.modalContent}>

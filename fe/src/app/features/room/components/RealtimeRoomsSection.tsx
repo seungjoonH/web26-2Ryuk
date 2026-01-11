@@ -14,7 +14,7 @@ import Modal from '@/app/components/shared/modal/Modal';
 import RoomCreationModalContent from './creation/RoomCreationModalContent';
 import roomService from '../services/RoomService';
 import useNavigation from '@/app/hooks/useNavigation';
-import { useModal } from '@/app/components/shared/modal/Modal';
+import { useModal } from '@/app/components/shared/modal/useModal';
 
 export default function RealtimeRoomsSection({ rooms, onSearch }: RealtimeRoomsSectionProps) {
   const { isDesktop } = useResponsive();
