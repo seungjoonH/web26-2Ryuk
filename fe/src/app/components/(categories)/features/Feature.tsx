@@ -13,7 +13,7 @@ import { PostConverter } from '@/app/features/post/dtos/Post';
 import RoomChatModal from '@/app/features/chat/components/RoomChatModal';
 import MicSetting from '@/app/features/room/components/creation/MicSetting';
 import PasswordSetting from '@/app/features/room/components/creation/PasswordSetting';
-import RoomCreationModal from '@/app/features/room/components/creation/RoomCreationModal';
+import RoomCreationModalContent from '@/app/features/room/components/creation/RoomCreationModalContent';
 import RealtimeRoomsSection from '@/app/features/room/components/RealtimeRoomsSection';
 import RoomCard from '@/app/features/room/components/card/RoomCard';
 import roomsMock from '@/mocks/data/rooms.json';
@@ -227,7 +227,7 @@ export default function FeatureComponents() {
         <ComponentRelations componentId="room-creation-modal" />
         <div className={styles.showcaseBlock}>
           <Component>
-            <RoomCreationModal />
+            <RoomCreationModalContent />
           </Component>
         </div>
       </section>
