@@ -3,7 +3,6 @@
 import ChatPanel from './ChatPanel';
 import { RoomChatPanelProps } from './type';
 import styles from './chat.module.css';
-import AudioControlButtons from '@/app/features/voice/components/AudioControlButtons';
 
 export default function RoomChatPanel({
   participantCount,
@@ -13,10 +12,7 @@ export default function RoomChatPanel({
   onSpeakerToggle,
 }: RoomChatPanelProps) {
   const headerChildren = (
-    <div className={styles.roomChatHeaderControls}>
-      {/* <Avatar profileImage={myAvatar} /> */}
-      <AudioControlButtons />
-    </div>
+    <div className={styles.roomChatHeaderControls}>{/* <Avatar profileImage={myAvatar} /> */}</div>
   );
 
   return (
