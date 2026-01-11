@@ -1,29 +1,28 @@
 'use client';
 
-import ChatModalBase from './ChatModalBase';
-import { RoomChatModalProps } from './type';
-import { GhostIconButton } from '@/app/components/shared/icon/IconButton';
+import ChatPanel from './ChatPanel';
+import { RoomChatPanelProps } from './type';
 import styles from './chat.module.css';
+import AudioControlButtons from '@/app/features/voice/components/AudioControlButtons';
 
-export default function RoomChatModal({
+export default function RoomChatPanel({
   participantCount,
   chats,
   onMessageSubmit,
   onMicToggle,
   onSpeakerToggle,
-}: RoomChatModalProps) {
+}: RoomChatPanelProps) {
   const headerChildren = (
     <div className={styles.roomChatHeaderControls}>
       {/* <Avatar profileImage={myAvatar} /> */}
-      <GhostIconButton name="mic" size="medium" onClick={onMicToggle} />
-      <GhostIconButton name="speaker" size="medium" onClick={onSpeakerToggle} />
+      <AudioControlButtons />
     </div>
   );
 
   return (
-    <ChatModalBase
+    <ChatPanel
       iconName="voice"
-      title="음성 채팅"
+      type="local"
       participantCount={participantCount}
       chats={chats}
       onMessageSubmit={onMessageSubmit}

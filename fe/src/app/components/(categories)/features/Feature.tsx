@@ -1,7 +1,7 @@
 import styles from '@/app/components/helpers/components.module.css';
 import { ChatBubbles, ChatConverter, GlobalChat } from '@/app/features/chat';
 import ChatBubble from '@/app/features/chat/components/ChatBubble';
-import ChatModalBase from '@/app/features/chat/components/ChatModalBase';
+import ChatPanel from '@/app/features/chat/components/ChatPanel';
 import PopularPosts from '@/app/features/post/components/PopularPosts';
 import PostListRow from '@/app/features/post/components/PostListRow';
 import PostListItem from '@/app/features/post/components/PostListItem';
@@ -10,15 +10,19 @@ import ComponentRelations from '@/app/components/helpers/ComponentRelations';
 import globalChatMock from '@/mocks/data/globalChat.json';
 import postListCardMock from '@/mocks/data/postListCard.json';
 import { PostConverter } from '@/app/features/post/dtos/Post';
-import RoomChatModal from '@/app/features/chat/components/RoomChatModal';
+import RoomChatPanel from '@/app/features/chat/components/RoomChatPanel';
 import MicSetting from '@/app/features/room/components/creation/MicSetting';
 import PasswordSetting from '@/app/features/room/components/creation/PasswordSetting';
-import RoomCreationModal from '@/app/features/room/components/creation/RoomCreationModal';
+import RoomCreationModalContent from '@/app/features/room/components/creation/RoomCreationModalContent';
 import RealtimeRoomsSection from '@/app/features/room/components/RealtimeRoomsSection';
 import RoomCard from '@/app/features/room/components/card/RoomCard';
 import roomsMock from '@/mocks/data/rooms.json';
 import { RoomConverter } from '@/app/features/room/dtos/Room';
-import GlobalChatModal from '@/app/features/chat/components/GlobalChatModal';
+import GlobalChatPanel from '@/app/features/chat/components/GlobalChatPanel';
+import { GhostTextButton } from '@/app/components/shared/button/TextButton';
+import Modal from '@/app/components/shared/modal/Modal';
+import AudioControlButtons from '@/app/features/voice/components/AudioControlButtons';
+import SpeakerControlButton from '@/app/features/voice/components/SpeakerControlButton';
 
 export default function FeatureComponents() {
   return (
@@ -40,7 +44,7 @@ export default function FeatureComponents() {
                     isMe: false,
                   }}
                   message="Their Message"
-                  timestamp={new Date()}
+                  timestamp={new Date('2024-01-15T14:30:00.000Z')}
                 />
               </Component>
             </div>
@@ -58,7 +62,7 @@ export default function FeatureComponents() {
                     isMe: true,
                   }}
                   message="My Message"
-                  timestamp={new Date()}
+                  timestamp={new Date('2024-01-15T14:31:00.000Z')}
                 />
               </Component>
             </div>
@@ -76,36 +80,80 @@ export default function FeatureComponents() {
         </div>
       </section>
 
-      <section id="chat-modal-base" className={styles.section}>
-        <h2 className={styles.sectionTitle}>ChatModalBase</h2>
-        <ComponentRelations componentId="chat-modal-base" />
+      <section id="global-chat-panel" className={styles.section}>
+        <h2 className={styles.sectionTitle}>GlobalChatPanel</h2>
+        <ComponentRelations componentId="global-chat-panel" />
         <div className={styles.showcaseBlock}>
           <Component>
-            <ChatModalBase iconName="photo" title="Title" participantCount={0} chats={[]} />
+            <GlobalChatPanel />
           </Component>
         </div>
       </section>
 
-      <section id="global-chat-modal" className={styles.section}>
-        <h2 className={styles.sectionTitle}>GlobalChatModal</h2>
-        <ComponentRelations componentId="global-chat-modal" />
+      <section id="room-chat-panel" className={styles.section}>
+        <h2 className={styles.sectionTitle}>RoomChatPanel</h2>
+        <ComponentRelations componentId="room-chat-panel" />
         <div className={styles.showcaseBlock}>
           <Component>
-            <GlobalChatModal />
-          </Component>
-        </div>
-      </section>
-
-      <section id="room-chat-modal" className={styles.section}>
-        <h2 className={styles.sectionTitle}>RoomChatModal</h2>
-        <ComponentRelations componentId="room-chat-modal" />
-        <div className={styles.showcaseBlock}>
-          <Component>
-            <RoomChatModal
+            <RoomChatPanel
               participantCount={roomsMock.rooms[0]?.current_participants || 0}
               chats={[]}
             />
           </Component>
+        </div>
+      </section>
+
+      <section id="speaker-control-button" className={styles.section}>
+        <h2 className={styles.sectionTitle}>SpeakerControlButton</h2>
+        <ComponentRelations componentId="speaker-control-button" />
+        <div className={styles.chatRow}>
+          <div className={styles.showcaseBlock}>
+            <h3 className={styles.blockTitle}>Active</h3>
+            <div className={styles.buttonColumn}>
+              <Component>
+                <SpeakerControlButton initialState={true} />
+              </Component>
+            </div>
+          </div>
+          <div className={styles.showcaseBlock}>
+            <h3 className={styles.blockTitle}>Muted</h3>
+            <div className={styles.buttonColumn}>
+              <Component>
+                <SpeakerControlButton initialState={false} />
+              </Component>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="audio-control-buttons" className={styles.section}>
+        <h2 className={styles.sectionTitle}>AudioControlButtons</h2>
+        <ComponentRelations componentId="audio-control-buttons" />
+        <div className={styles.chatRow}>
+          <div className={styles.showcaseBlock}>
+            <h3 className={styles.blockTitle}>Both Active</h3>
+            <div className={styles.buttonColumn}>
+              <Component>
+                <AudioControlButtons initialMicState={true} initialSpeakerState={true} />
+              </Component>
+            </div>
+          </div>
+          <div className={styles.showcaseBlock}>
+            <h3 className={styles.blockTitle}>Mic Muted</h3>
+            <div className={styles.buttonColumn}>
+              <Component>
+                <AudioControlButtons initialMicState={false} initialSpeakerState={true} />
+              </Component>
+            </div>
+          </div>
+          <div className={styles.showcaseBlock}>
+            <h3 className={styles.blockTitle}>Both Muted</h3>
+            <div className={styles.buttonColumn}>
+              <Component>
+                <AudioControlButtons initialMicState={false} initialSpeakerState={false} />
+              </Component>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -227,7 +275,10 @@ export default function FeatureComponents() {
         <ComponentRelations componentId="room-creation-modal" />
         <div className={styles.showcaseBlock}>
           <Component>
-            <RoomCreationModal />
+            <GhostTextButton modalId="room-creation-demo" text="모달 열기" size="medium" />
+            <Modal id="room-creation-demo">
+              <RoomCreationModalContent />
+            </Modal>
           </Component>
         </div>
       </section>
